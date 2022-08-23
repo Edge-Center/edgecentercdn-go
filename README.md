@@ -1,5 +1,5 @@
-# gcorelabscdn-go
+# edgecentercdn-go
 
-![golangci-lint](https://github.com/G-Core/gcorelabscdn-go/actions/workflows/golangci-lint.yml/badge.svg)
+![golangci-lint](https://github.com/Edge-Center/edgecentercdn-go/actions/workflows/golangci-lint.yml/badge.svg)
 
-`gcorelabscdn-go` is the G-Core CDN API SDK for the Go programming language.
+`edgecentercdn-go` is the EdgeCenter CDN API SDK for the Go programming language.
