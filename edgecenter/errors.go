@@ -1,4 +1,4 @@
-package gcore
+package edgecenter
 
 import "encoding/json"
 

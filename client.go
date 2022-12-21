@@ -1,11 +1,11 @@
-package gcdn
+package edgecentercdn_go
 
 import (
-	"github.com/G-Core/gcorelabscdn-go/gcore"
-	"github.com/G-Core/gcorelabscdn-go/origingroups"
-	"github.com/G-Core/gcorelabscdn-go/resources"
-	"github.com/G-Core/gcorelabscdn-go/rules"
-	"github.com/G-Core/gcorelabscdn-go/sslcerts"
+	"github.com/Edge-Center/edgecentercdn-go/edgecenter"
+	"github.com/Edge-Center/edgecentercdn-go/origingroups"
+	"github.com/Edge-Center/edgecentercdn-go/resources"
+	"github.com/Edge-Center/edgecentercdn-go/rules"
+	"github.com/Edge-Center/edgecentercdn-go/sslcerts"
 )
 
 type ClientService interface {
@@ -18,14 +18,14 @@ type ClientService interface {
 var _ ClientService = (*Service)(nil)
 
 type Service struct {
-	r                   gcore.Requester
+	r                   edgecenter.Requester
 	resourcesService    resources.ResourceService
 	rulesService        rules.RulesService
 	originGroupsService origingroups.OriginGroupService
 	sslCertsService     sslcerts.SSLCertService
 }
 
-func NewService(r gcore.Requester) *Service {
+func NewService(r edgecenter.Requester) *Service {
 	return &Service{
 		r:                   r,
 		resourcesService:    resources.NewService(r),

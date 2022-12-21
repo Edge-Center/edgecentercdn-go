@@ -1,4 +1,4 @@
-package gcore
+package edgecenter
 
 type Options struct {
 	EdgeCacheSettings    *EdgeCacheSettings    `json:"edge_cache_settings"`
