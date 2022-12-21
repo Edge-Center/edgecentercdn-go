@@ -1,3 +1,3 @@
-module github.com/G-Core/gcorelabscdn-go
+module github.com/Edge-Center/edgecentercdn-go
 
-go 1.15
+go 1.19

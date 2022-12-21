@@ -1,9 +1,8 @@
 package provider
 
 import (
+	"github.com/Edge-Center/edgecentercdn-go/edgecenter"
 	"time"
-
-	"github.com/G-Core/gcorelabscdn-go/gcore"
 )
 
 type ClientOption func(*Client)
@@ -14,13 +13,13 @@ func WithTimeout(timeout time.Duration) ClientOption {
 	}
 }
 
-func WithSigner(signer gcore.RequestSigner) ClientOption {
+func WithSigner(signer edgecenter.RequestSigner) ClientOption {
 	return func(c *Client) {
 		c.signer = signer
 	}
 }
 
-func WithSignerFunc(f gcore.RequestSignerFunc) ClientOption {
+func WithSignerFunc(f edgecenter.RequestSignerFunc) ClientOption {
 	return func(c *Client) {
 		c.signer = f
 	}

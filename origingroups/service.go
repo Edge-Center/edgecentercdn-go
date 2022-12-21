@@ -3,18 +3,17 @@ package origingroups
 import (
 	"context"
 	"fmt"
+	"github.com/Edge-Center/edgecentercdn-go/edgecenter"
 	"net/http"
-
-	"github.com/G-Core/gcorelabscdn-go/gcore"
 )
 
 var _ OriginGroupService = (*Service)(nil)
 
 type Service struct {
-	r gcore.Requester
+	r edgecenter.Requester
 }
 
-func NewService(r gcore.Requester) *Service {
+func NewService(r edgecenter.Requester) *Service {
 	return &Service{r: r}
 }
 

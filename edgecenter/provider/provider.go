@@ -9,12 +9,12 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/G-Core/gcorelabscdn-go/gcore"
+	"github.com/Edge-Center/edgecentercdn-go/edgecenter"
 )
 
 type Client struct {
 	httpc   *http.Client
-	signer  gcore.RequestSigner
+	signer  edgecenter.RequestSigner
 	ua      string
 	baseURL string
 }
@@ -53,7 +53,7 @@ func (c *Client) Request(ctx context.Context, method, path string, payload inter
 	}
 
 	if resp.StatusCode < http.StatusOK || resp.StatusCode >= http.StatusBadRequest {
-		var errResp gcore.ErrorResponse
+		var errResp edgecenter.ErrorResponse
 		if err := json.NewDecoder(resp.Body).Decode(&errResp); err != nil {
 			return fmt.Errorf("decode err resp %d: %w", resp.StatusCode, err)
 		}

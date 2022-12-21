@@ -2,8 +2,7 @@ package rules
 
 import (
 	"context"
-
-	"github.com/G-Core/gcorelabscdn-go/gcore"
+	"github.com/Edge-Center/edgecentercdn-go/edgecenter"
 )
 
 type RulesService interface {
@@ -14,31 +13,31 @@ type RulesService interface {
 }
 
 type CreateRequest struct {
-	Name                   string         `json:"name,omitempty"`
-	Rule                   string         `json:"rule,omitempty"`
-	RuleType               int            `json:"ruleType"`
-	OriginGroup            *int           `json:"originGroup"`
-	OverrideOriginProtocol *string        `json:"overrideOriginProtocol"`
-	Options                *gcore.Options `json:"options,omitempty"`
+	Name                   string              `json:"name,omitempty"`
+	Rule                   string              `json:"rule,omitempty"`
+	RuleType               int                 `json:"ruleType"`
+	OriginGroup            *int                `json:"originGroup"`
+	OverrideOriginProtocol *string             `json:"overrideOriginProtocol"`
+	Options                *edgecenter.Options `json:"options,omitempty"`
 }
 
 type UpdateRequest struct {
-	Name                   string         `json:"name,omitempty"`
-	Rule                   string         `json:"rule,omitempty"`
-	RuleType               int            `json:"ruleType"`
-	OriginGroup            *int           `json:"originGroup"`
-	OverrideOriginProtocol *string        `json:"overrideOriginProtocol"`
-	Options                *gcore.Options `json:"options,omitempty"`
+	Name                   string              `json:"name,omitempty"`
+	Rule                   string              `json:"rule,omitempty"`
+	RuleType               int                 `json:"ruleType"`
+	OriginGroup            *int                `json:"originGroup"`
+	OverrideOriginProtocol *string             `json:"overrideOriginProtocol"`
+	Options                *edgecenter.Options `json:"options,omitempty"`
 }
 
 type Rule struct {
-	ID                     int64          `json:"id"`
-	Name                   string         `json:"name"`
-	Deleted                bool           `json:"deleted"`
-	OriginGroup            *int           `json:"originGroup"`
-	OriginProtocol         string         `json:"originProtocol"`
-	OverrideOriginProtocol *string        `json:"overrideOriginProtocol"`
-	Pattern                string         `json:"rule"`
-	Type                   int            `json:"ruleType"`
-	Options                *gcore.Options `json:"options,omitempty"`
+	ID                     int64               `json:"id"`
+	Name                   string              `json:"name"`
+	Deleted                bool                `json:"deleted"`
+	OriginGroup            *int                `json:"originGroup"`
+	OriginProtocol         string              `json:"originProtocol"`
+	OverrideOriginProtocol *string             `json:"overrideOriginProtocol"`
+	Pattern                string              `json:"rule"`
+	Type                   int                 `json:"ruleType"`
+	Options                *edgecenter.Options `json:"options,omitempty"`
 }

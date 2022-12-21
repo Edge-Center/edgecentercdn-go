@@ -2,9 +2,8 @@ package resources
 
 import (
 	"context"
+	"github.com/Edge-Center/edgecentercdn-go/edgecenter"
 	"time"
-
-	"github.com/G-Core/gcorelabscdn-go/gcore"
 )
 
 type ResourceService interface {
@@ -31,47 +30,47 @@ const (
 )
 
 type CreateRequest struct {
-	Cname              string         `json:"cname,omitempty"`
-	Description        string         `json:"description"`
-	OriginGroup        int            `json:"originGroup,omitempty"`
-	OriginProtocol     Protocol       `json:"originProtocol,omitempty"`
-	Origin             string         `json:"origin,omitempty"`
-	SecondaryHostnames []string       `json:"secondaryHostnames,omitempty"`
-	SSlEnabled         bool           `json:"sslEnabled"`
-	SSLData            int            `json:"sslData,omitempty"`
-	SSLAutomated       bool           `json:"ssl_automated"`
-	IssueLECert        bool           `json:"le_issue,omitempty"`
-	Options            *gcore.Options `json:"options,omitempty"`
+	Cname              string              `json:"cname,omitempty"`
+	Description        string              `json:"description"`
+	OriginGroup        int                 `json:"originGroup,omitempty"`
+	OriginProtocol     Protocol            `json:"originProtocol,omitempty"`
+	Origin             string              `json:"origin,omitempty"`
+	SecondaryHostnames []string            `json:"secondaryHostnames,omitempty"`
+	SSlEnabled         bool                `json:"sslEnabled"`
+	SSLData            int                 `json:"sslData,omitempty"`
+	SSLAutomated       bool                `json:"ssl_automated"`
+	IssueLECert        bool                `json:"le_issue,omitempty"`
+	Options            *edgecenter.Options `json:"options,omitempty"`
 }
 
 type UpdateRequest struct {
-	Description        string         `json:"description"`
-	Active             bool           `json:"active"`
-	OriginGroup        int            `json:"originGroup"`
-	OriginProtocol     Protocol       `json:"originProtocol,omitempty"`
-	SecondaryHostnames []string       `json:"secondaryHostnames,omitempty"`
-	SSlEnabled         bool           `json:"sslEnabled"`
-	SSLData            int            `json:"sslData,omitempty"`
-	SSLAutomated       bool           `json:"ssl_automated"`
-	Options            *gcore.Options `json:"options,omitempty"`
+	Description        string              `json:"description"`
+	Active             bool                `json:"active"`
+	OriginGroup        int                 `json:"originGroup"`
+	OriginProtocol     Protocol            `json:"originProtocol,omitempty"`
+	SecondaryHostnames []string            `json:"secondaryHostnames,omitempty"`
+	SSlEnabled         bool                `json:"sslEnabled"`
+	SSLData            int                 `json:"sslData,omitempty"`
+	SSLAutomated       bool                `json:"ssl_automated"`
+	Options            *edgecenter.Options `json:"options,omitempty"`
 }
 
 type Resource struct {
-	ID                 int64          `json:"id"`
-	Name               string         `json:"name"`
-	CreatedAt          time.Time      `json:"created"`
-	UpdatedAt          time.Time      `json:"updated"`
-	Status             ResourceStatus `json:"status"`
-	Active             bool           `json:"active"`
-	Client             int64          `json:"client"`
-	OriginGroup        int64          `json:"originGroup"`
-	Cname              string         `json:"cname"`
-	Description        string         `json:"description"`
-	SecondaryHostnames []string       `json:"secondaryHostnames"`
-	Shielded           bool           `json:"shielded"`
-	SSlEnabled         bool           `json:"sslEnabled"`
-	SSLData            int            `json:"sslData"`
-	SSLAutomated       bool           `json:"ssl_automated"`
-	OriginProtocol     Protocol       `json:"originProtocol"`
-	Options            *gcore.Options `json:"options"`
+	ID                 int64               `json:"id"`
+	Name               string              `json:"name"`
+	CreatedAt          time.Time           `json:"created"`
+	UpdatedAt          time.Time           `json:"updated"`
+	Status             ResourceStatus      `json:"status"`
+	Active             bool                `json:"active"`
+	Client             int64               `json:"client"`
+	OriginGroup        int64               `json:"originGroup"`
+	Cname              string              `json:"cname"`
+	Description        string              `json:"description"`
+	SecondaryHostnames []string            `json:"secondaryHostnames"`
+	Shielded           bool                `json:"shielded"`
+	SSlEnabled         bool                `json:"sslEnabled"`
+	SSLData            int                 `json:"sslData"`
+	SSLAutomated       bool                `json:"ssl_automated"`
+	OriginProtocol     Protocol            `json:"originProtocol"`
+	Options            *edgecenter.Options `json:"options"`
 }
