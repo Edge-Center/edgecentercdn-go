@@ -19,7 +19,7 @@ func NewService(r edgecenter.Requester) *Service {
 
 func (s *Service) Create(ctx context.Context, req *GroupRequest) (*OriginGroup, error) {
 	var group OriginGroup
-	if err := s.r.Request(ctx, http.MethodPost, "/cdn/originGroups", req, &group); err != nil {
+	if err := s.r.Request(ctx, http.MethodPost, "/cdn/source_groups", req, &group); err != nil {
 		return nil, fmt.Errorf("request: %w", err)
 	}
 
@@ -28,7 +28,7 @@ func (s *Service) Create(ctx context.Context, req *GroupRequest) (*OriginGroup, 
 
 func (s *Service) Get(ctx context.Context, id int64) (*OriginGroup, error) {
 	var group OriginGroup
-	if err := s.r.Request(ctx, http.MethodGet, fmt.Sprintf("/cdn/originGroups/%d", id), nil, &group); err != nil {
+	if err := s.r.Request(ctx, http.MethodGet, fmt.Sprintf("/cdn/source_groups/%d", id), nil, &group); err != nil {
 		return nil, fmt.Errorf("request: %w", err)
 	}
 
@@ -37,7 +37,7 @@ func (s *Service) Get(ctx context.Context, id int64) (*OriginGroup, error) {
 
 func (s *Service) Update(ctx context.Context, id int64, req *GroupRequest) (*OriginGroup, error) {
 	var group OriginGroup
-	if err := s.r.Request(ctx, http.MethodPut, fmt.Sprintf("/cdn/originGroups/%d", id), req, &group); err != nil {
+	if err := s.r.Request(ctx, http.MethodPut, fmt.Sprintf("/cdn/source_groups/%d", id), req, &group); err != nil {
 		return nil, fmt.Errorf("request: %w", err)
 	}
 
@@ -45,7 +45,7 @@ func (s *Service) Update(ctx context.Context, id int64, req *GroupRequest) (*Ori
 }
 
 func (s *Service) Delete(ctx context.Context, id int64) error {
-	if err := s.r.Request(ctx, http.MethodDelete, fmt.Sprintf("/cdn/originGroups/%d", id), nil, nil); err != nil {
+	if err := s.r.Request(ctx, http.MethodDelete, fmt.Sprintf("/cdn/source_groups/%d", id), nil, nil); err != nil {
 
 		return fmt.Errorf("request: %w", err)
 	}
