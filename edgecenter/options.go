@@ -40,10 +40,10 @@ type LocationOptions struct {
 }
 
 type ResourceOptions struct {
-    LocationOptions
-	HTTP3Enabled                *HTTP3Enabled                `json:"http3_enabled"`
-	TLSVersions                 *TLSVersions                 `json:"tls_versions"`
-	UseDefaultLEChain           *UseDefaultLEChain           `json:"use_default_le_chain"`
+	LocationOptions
+	HTTP3Enabled      *HTTP3Enabled      `json:"http3_enabled"`
+	TLSVersions       *TLSVersions       `json:"tls_versions"`
+	UseDefaultLEChain *UseDefaultLEChain `json:"use_default_le_chain"`
 }
 
 type AllowedHTTPMethods struct {
