@@ -13,7 +13,7 @@ type RulesService interface {
 }
 
 type CreateRequest struct {
-    Active				   bool						   `json:"active,omitempty"`
+	Active                 bool                        `json:"active,omitempty"`
 	Name                   string                      `json:"name,omitempty"`
 	Rule                   string                      `json:"rule,omitempty"`
 	OriginGroup            *int                        `json:"originGroup"`
@@ -23,7 +23,7 @@ type CreateRequest struct {
 }
 
 type UpdateRequest struct {
-    Active				   bool						   `json:"active,omitempty"`
+	Active                 bool                        `json:"active,omitempty"`
 	Name                   string                      `json:"name,omitempty"`
 	Rule                   string                      `json:"rule,omitempty"`
 	OriginGroup            *int                        `json:"originGroup"`
@@ -35,7 +35,7 @@ type UpdateRequest struct {
 type Rule struct {
 	ID                     int64                       `json:"id"`
 	Name                   string                      `json:"name"`
-	Active				   bool						   `json:"active"`
+	Active                 bool                        `json:"active"`
 	Deleted                bool                        `json:"deleted"`
 	OriginGroup            *int                        `json:"originGroup"`
 	OriginProtocol         string                      `json:"originProtocol"`
