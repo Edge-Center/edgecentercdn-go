@@ -99,6 +99,7 @@ type FetchCompressed struct {
 type FollowOriginRedirect struct {
 	Enabled bool  `json:"enabled"`
 	Codes   []int `json:"codes"`
+	UseHost bool  `json:"use_host"`
 }
 
 type ForceReturn struct {

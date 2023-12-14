@@ -71,6 +71,7 @@ type Resource struct {
 	SSlEnabled         bool                        `json:"sslEnabled"`
 	SSLData            int                         `json:"sslData"`
 	SSLAutomated       bool                        `json:"ssl_automated"`
+	SSLLEEnabled       bool                        `json:"ssl_le_enabled"`
 	OriginProtocol     Protocol                    `json:"originProtocol"`
 	Options            *edgecenter.ResourceOptions `json:"options"`
 }
