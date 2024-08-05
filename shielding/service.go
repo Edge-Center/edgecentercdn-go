@@ -20,7 +20,7 @@ func NewService(r edgecenter.Requester) *Service {
 func (s *Service) Get(ctx context.Context, resourceID int64) (*ShieldingData, error) {
 	var shielding ShieldingData
 
-	path := fmt.Sprintf("/cdn/resources/%d/shielding_pop", resourceID)
+	path := fmt.Sprintf("/cdn/resources/%d/shieldingp", resourceID)
 	if err := s.r.Request(ctx, http.MethodGet, path, nil, &shielding); err != nil {
 		return nil, fmt.Errorf("request: %w", err)
 	}
