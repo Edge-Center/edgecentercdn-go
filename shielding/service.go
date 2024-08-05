@@ -31,7 +31,7 @@ func (s *Service) Get(ctx context.Context, resourceID int64) (*ShieldingData, er
 func (s *Service) Update(ctx context.Context, resourceID int64, req *UpdateShieldingData) (*ShieldingData, error) {
 	var shielding ShieldingData
 
-	path := fmt.Sprintf("/cdn/resources/%d/shielding_pop", resourceID)
+	path := fmt.Sprintf("/cdn/resources/%d/shielding", resourceID)
 
 	if err := s.r.Request(ctx, http.MethodPut, path, req, &shielding); err != nil {
 		return nil, fmt.Errorf("request: %w", err)
