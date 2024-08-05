@@ -42,7 +42,7 @@ func (s *Service) Update(ctx context.Context, resourceID int64, req *UpdateShiel
 func (s *Service) GetShieldingLocations(ctx context.Context) (*[]ShieldingLocations, error) {
 	var shieldingLocations []ShieldingLocations
 
-	if err := s.r.Request(ctx, http.MethodPut, "/cdn/shielding_pop", nil, &shieldingLocations); err != nil {
+	if err := s.r.Request(ctx, http.MethodGet, "/cdn/shielding_pop", nil, &shieldingLocations); err != nil {
 		return nil, fmt.Errorf("request: %w", err)
 	}
 	return &shieldingLocations, nil
