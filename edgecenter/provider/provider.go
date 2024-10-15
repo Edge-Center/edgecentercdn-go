@@ -53,6 +53,9 @@ func (c *Client) Request(ctx context.Context, method, path string, payload inter
 	}
 
 	if resp.StatusCode < http.StatusOK || resp.StatusCode >= http.StatusBadRequest {
+		if resp.StatusCode == http.StatusNotFound {
+			return fmt.Errorf("resource not found at path: %s, possibly deleted via API or UI. Run 'terraform state rm <type_name>.<resource_name>' to fix", path)
+		}
 		var errResp edgecenter.ErrorResponse
 		if err := json.NewDecoder(resp.Body).Decode(&errResp); err != nil {
 			return fmt.Errorf("decode err resp %d: %w", resp.StatusCode, err)
