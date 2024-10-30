@@ -12,9 +12,10 @@ type OriginGroupService interface {
 }
 
 type GroupRequest struct {
-	Name    string          `json:"name"`
-	UseNext bool            `json:"useNext"`
-	Origins []OriginRequest `json:"origins"`
+	Name                string          `json:"name"`
+	UseNext             bool            `json:"useNext"`
+	Origins             []OriginRequest `json:"origins"`
+	ConsistentBalancing bool            `json:"consistent_balancing"`
 }
 
 type OriginRequest struct {
@@ -24,10 +25,11 @@ type OriginRequest struct {
 }
 
 type OriginGroup struct {
-	ID      int64    `json:"id"`
-	Name    string   `json:"name"`
-	UseNext bool     `json:"useNext"`
-	Origins []Origin `json:"origin_ids"`
+	ID                  int64    `json:"id"`
+	Name                string   `json:"name"`
+	UseNext             bool     `json:"useNext"`
+	Origins             []Origin `json:"origin_ids"`
+	ConsistentBalancing bool     `json:"consistent_balancing"`
 }
 
 type Origin struct {
