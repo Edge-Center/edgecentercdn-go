@@ -53,15 +53,18 @@ func (c *Client) Request(ctx context.Context, method, path string, payload inter
 	}
 
 	if resp.StatusCode < http.StatusOK || resp.StatusCode >= http.StatusBadRequest {
-		if resp.StatusCode == http.StatusNotFound {
-			return fmt.Errorf("resource not found at path: %s, possibly deleted via API or UI. Run 'terraform state rm <type_name>.<resource_name>' to fix", path)
+		switch resp.StatusCode {
+		case http.StatusNotFound:
+			return fmt.Errorf("resource not found at path: %s", path)
+		case http.StatusUnauthorized:
+			return fmt.Errorf("unauthorized. Invalid or expired credentials, please check your authentication setup")
+		default:
+			var errResp edgecenter.ErrorResponse
+			if err := json.NewDecoder(resp.Body).Decode(&errResp); err != nil {
+				return fmt.Errorf("decode err resp %d: %w", resp.StatusCode, err)
+			}
+			return &errResp
 		}
-		var errResp edgecenter.ErrorResponse
-		if err := json.NewDecoder(resp.Body).Decode(&errResp); err != nil {
-			return fmt.Errorf("decode err resp %d: %w", resp.StatusCode, err)
-		}
-
-		return &errResp
 	}
 
 	if result != nil {
@@ -75,9 +78,11 @@ func (c *Client) Request(ctx context.Context, method, path string, payload inter
 
 func (c *Client) do(req *http.Request) (*http.Response, error) {
 	req.Header.Set("Content-Type", "application/json")
+
 	if c.ua != "" {
 		req.Header.Set("User-Agent", c.ua)
 	}
+
 	if c.signer != nil {
 		if err := c.signer.Sign(req); err != nil {
 			return nil, err

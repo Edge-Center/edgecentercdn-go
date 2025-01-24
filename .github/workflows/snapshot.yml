@@ -1,0 +1,45 @@
+name: Snapshot
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Build Snapshot
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: 1.19
+
+      - name: Build snapshot artifacts
+        uses: goreleaser/goreleaser-action@v6
+        with:
+          version: latest
+          args: release --snapshot --clean
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: archives-${{ github.run_id }}
+          path: |
+            dist/**/*.zip
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Comment PR with download link
+        uses: thollander/actions-comment-pull-request@v3
+        with:
+          message: |
+            ✅ Snapshot build is ready!  
+            [Download artifacts](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+          comment_tag: "snapshot-build"
