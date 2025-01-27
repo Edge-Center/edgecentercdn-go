@@ -15,6 +15,7 @@ type GroupRequest struct {
 	Name                string          `json:"name"`
 	UseNext             bool            `json:"useNext"`
 	Origins             []OriginRequest `json:"origins"`
+	Authorization       *Authorization  `json:"authorization"`
 	ConsistentBalancing bool            `json:"consistent_balancing"`
 }
 
@@ -25,11 +26,12 @@ type OriginRequest struct {
 }
 
 type OriginGroup struct {
-	ID                  int64    `json:"id"`
-	Name                string   `json:"name"`
-	UseNext             bool     `json:"useNext"`
-	Origins             []Origin `json:"origin_ids"`
-	ConsistentBalancing bool     `json:"consistent_balancing"`
+	ID                  int64          `json:"id"`
+	Name                string         `json:"name"`
+	UseNext             bool           `json:"useNext"`
+	Origins             []Origin       `json:"origin_ids"`
+	Authorization       *Authorization `json:"authorization"`
+	ConsistentBalancing bool           `json:"consistent_balancing"`
 }
 
 type Origin struct {
@@ -37,4 +39,11 @@ type Origin struct {
 	Source  string `json:"source"`
 	Backup  bool   `json:"backup"`
 	Enabled bool   `json:"enabled"`
+}
+
+type Authorization struct {
+	AuthType    string `json:"auth_type"`
+	AccessKeyID string `json:"access_key_id"`
+	SecretKey   string `json:"secret_key"`
+	BucketName  string `json:"bucket_name"`
 }
