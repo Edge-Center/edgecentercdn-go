@@ -1,6 +1,7 @@
 package provider
 
 import (
+	"fmt"
 	"github.com/Edge-Center/edgecentercdn-go/edgecenter"
 	"time"
 )
@@ -29,4 +30,8 @@ func WithUA(ua string) ClientOption {
 	return func(c *Client) {
 		c.ua = ua
 	}
+}
+
+func AuthenticatedHeaders(apiKey string) (m map[string]string) {
+	return map[string]string{"Authorization": fmt.Sprintf("APIKey %s", apiKey)}
 }

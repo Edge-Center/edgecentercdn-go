@@ -52,3 +52,35 @@ func (s *Service) Delete(ctx context.Context, resourceID int64) error {
 
 	return nil
 }
+
+func (s *Service) Page(ctx context.Context, offset uint, size uint, filter *ListFilterRequest) (*PaginatedResource, error) {
+	var response PaginatedResource
+
+	path := buildListPath(offset, size, filter)
+
+	if err := s.r.Request(ctx, http.MethodGet, path, nil, &response); err != nil {
+		return nil, err
+	}
+
+	return &response, nil
+}
+
+func (s *Service) List(ctx context.Context, filter *ListFilterRequest) ([]Resource, error) {
+	var response []Resource
+
+	path := buildListPath(0, 0, filter)
+
+	if err := s.r.Request(ctx, http.MethodGet, path, nil, &response); err != nil {
+		return nil, err
+	}
+
+	return response, nil
+}
+
+func (s *Service) Count(ctx context.Context, filter *ListFilterRequest) (uint, error) {
+	page, err := s.Page(ctx, 0, 1, filter)
+	if err != nil {
+		return 0, err
+	}
+	return page.Count, nil
+}
