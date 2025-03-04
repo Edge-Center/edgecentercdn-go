@@ -26,6 +26,7 @@ func ValidateMetrics(metrics []string) error {
 		MetricShieldTrafficRatio:    true,
 		MetricImageProcessed:        true,
 		MetricOriginResponseTime:    true,
+		MetricRequestWafPassed:      true,
 	}
 	for _, metric := range metrics {
 		m := Metric(metric)

@@ -59,7 +59,17 @@ go build -o edge-cli
 
 #### Create origin
 ```bash
-./edge-cli origins create --name=example.com --source=$example.com
+./edge-cli origins create --name=example.com --source=example.com --consistent-balancing=false
+```
+
+#### Update origin
+```bash
+./edge-cli origins update --id=${SOURCE_ORIGIN_ID} --name=example.com --source=example.com --consistent-balancing=true
+```
+
+#### Delete origin
+```bash
+./edge-cli origins delete --id=${SOURCE_ORIGIN_ID}
 ```
 
 #### Create origin with auth
@@ -72,4 +82,20 @@ go build -o edge-cli
     --access-key-id="123123234" \
     --secret-key="asdnaskjdnajdasdjansndjasndjknsdksdna"
 ```
+
+#### Purge resource
+Purge all paths for a specific resource ID
+```bash
+./edge-cli purge --id 123456
+```
+
+Purge all paths for resources associated with a specific CNAME
+```bash
+./edge-cli purge --cname example.com --path /index.html --path /styles.css
+```
+
+
+
+
+
 
