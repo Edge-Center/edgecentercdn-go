@@ -4,7 +4,6 @@ type LocationOptions struct {
 	AllowedHTTPMethods          *AllowedHTTPMethods          `json:"allowedHttpMethods"`
 	BrotliCompression           *BrotliCompression           `json:"brotli_compression"`
 	BrowserCacheSettings        *BrowserCacheSettings        `json:"browser_cache_settings"`
-	CacheHttpHeaders            *CacheHttpHeaders            `json:"cache_http_headers"` // Deprecated. Use - response_headers_hiding_policy
 	Cors                        *Cors                        `json:"cors"`
 	CountryACL                  *CountryACL                  `json:"country_acl"`
 	DisableProxyForceRanges     *DisableProxyForceRanges     `json:"disable_proxy_force_ranges"`
@@ -13,7 +12,6 @@ type LocationOptions struct {
 	FollowOriginRedirect        *FollowOriginRedirect        `json:"follow_origin_redirect"`
 	ForceReturn                 *ForceReturn                 `json:"force_return"`
 	ForwardHostHeader           *ForwardHostHeader           `json:"forward_host_header"`
-	GzipOn                      *GzipOn                      `json:"gzipOn"`
 	HostHeader                  *HostHeader                  `json:"hostHeader"`
 	IgnoreCookie                *IgnoreCookie                `json:"ignore_cookie"`
 	IgnoreQueryString           *IgnoreQueryString           `json:"ignoreQueryString"`
@@ -32,7 +30,6 @@ type LocationOptions struct {
 	Slice                       *Slice                       `json:"slice"`
 	SNI                         *SNIOption                   `json:"sni"`
 	Stale                       *Stale                       `json:"stale"`
-	StaticHeaders               *StaticHeaders               `json:"staticHeaders"` // Deprecated. Use - static_response_headers
 	StaticRequestHeaders        *StaticRequestHeaders        `json:"staticRequestHeaders"`
 	StaticResponseHeaders       *StaticResponseHeaders       `json:"static_response_headers"`
 	UserAgentACL                *UserAgentACL                `json:"user_agent_acl"`
@@ -59,12 +56,6 @@ type BrotliCompression struct {
 type BrowserCacheSettings struct {
 	Enabled bool   `json:"enabled"`
 	Value   string `json:"value"`
-}
-
-// Deprecated. Use - ResponseHeadersHidingPolicy / response_headers_hiding_policy
-type CacheHttpHeaders struct {
-	Enabled bool     `json:"enabled"`
-	Value   []string `json:"value"`
 }
 
 type Cors struct {
@@ -109,11 +100,6 @@ type ForceReturn struct {
 }
 
 type ForwardHostHeader struct {
-	Enabled bool `json:"enabled"`
-	Value   bool `json:"value"`
-}
-
-type GzipOn struct {
 	Enabled bool `json:"enabled"`
 	Value   bool `json:"value"`
 }
@@ -222,12 +208,6 @@ type SNIOption struct {
 type Stale struct {
 	Enabled bool     `json:"enabled"`
 	Value   []string `json:"value"`
-}
-
-// Deprecated. Use - StaticResponseHeaders / staticRequestHeaders
-type StaticHeaders struct {
-	Enabled bool              `json:"enabled"`
-	Value   map[string]string `json:"value"`
 }
 
 type StaticRequestHeaders struct {
