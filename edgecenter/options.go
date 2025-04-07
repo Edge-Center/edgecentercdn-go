@@ -12,6 +12,7 @@ type LocationOptions struct {
 	FollowOriginRedirect        *FollowOriginRedirect        `json:"follow_origin_redirect"`
 	ForceReturn                 *ForceReturn                 `json:"force_return"`
 	ForwardHostHeader           *ForwardHostHeader           `json:"forward_host_header"`
+	GeoAcl                      *GeoAccessPolicy             `json:"geo_acl"`
 	GzipCompression             *GzipCompression             `json:"gzip_compression"`
 	HostHeader                  *HostHeader                  `json:"hostHeader"`
 	IgnoreCookie                *IgnoreCookie                `json:"ignore_cookie"`
@@ -103,6 +104,12 @@ type ForceReturn struct {
 type ForwardHostHeader struct {
 	Enabled bool `json:"enabled"`
 	Value   bool `json:"value"`
+}
+
+type GeoAccessPolicy struct {
+	Enabled  bool                `json:"enabled"`
+	Default  string              `json:"policy_type"`
+	Excepted map[string][]string `json:"excepted_values"`
 }
 
 type GzipCompression struct {
