@@ -32,6 +32,11 @@ go build -o edge-cli
 ./edge-cli metrics get --groupby=country --metric=sent_bytes --metric=origin_response_time --metric=responses_5xx --from=2025-01-01T00:00:00Z --to=2025-01-24T23:59:00Z
 ```
 
+#### Group metrics by datacenter
+```bash
+./edge-cli metrics get --groupby=dc --metric=sent_bytes --metric=origin_response_time --metric=responses_5xx --from=2025-01-01T00:00:00Z --to=2025-01-24T23:59:00Z
+```
+
 #### Group metrics by resource output as table
 ```bash
 ./edge-cli metrics get --output=table --groupby=resource --groupby=vhost --metric=request_time --metric=origin_response_time --metric=cdn_bytes  --from=2025-01-01T00:00:00Z --to=2025-01-24T23:59:00Z
