@@ -5,7 +5,6 @@ type LocationOptions struct {
 	BrotliCompression           *BrotliCompression           `json:"brotli_compression"`
 	BrowserCacheSettings        *BrowserCacheSettings        `json:"browser_cache_settings"`
 	Cors                        *Cors                        `json:"cors"`
-	CountryACL                  *CountryACL                  `json:"country_acl"`
 	DisableProxyForceRanges     *DisableProxyForceRanges     `json:"disable_proxy_force_ranges"`
 	EdgeCacheSettings           *EdgeCacheSettings           `json:"edge_cache_settings"`
 	FetchCompressed             *FetchCompressed             `json:"fetch_compressed"`
@@ -64,12 +63,6 @@ type Cors struct {
 	Enabled bool     `json:"enabled"`
 	Value   []string `json:"value"`
 	Always  bool     `json:"always"`
-}
-
-type CountryACL struct {
-	Enabled        bool     `json:"enabled"`
-	PolicyType     string   `json:"policy_type"`
-	ExceptedValues []string `json:"excepted_values"`
 }
 
 type DisableProxyForceRanges struct {
