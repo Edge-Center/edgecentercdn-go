@@ -15,15 +15,26 @@ func NewService(r edgecenter.Requester) *Service {
 	return &Service{r: r}
 }
 
+func (s *Service) GetLECert(ctx context.Context, resourceID int64) (*LECertStatus, error) {
+	var status LECertStatus
+	path := fmt.Sprintf("/cdn/resources/%d/ssl/le/status", resourceID)
+	if err := s.r.Request(ctx, http.MethodGet, path, nil, &status); err != nil {
+		return nil, fmt.Errorf("request: %w", err)
+	}
+	return &status, nil
+}
+
 func (s *Service) CreateLECert(ctx context.Context, resourceID int64) error {
-	if err := s.r.Request(ctx, http.MethodPost, fmt.Sprintf("/cdn/resources/%d/ssl/le/issue", resourceID), nil, nil); err != nil {
+	path := fmt.Sprintf("/cdn/resources/%d/ssl/le/status", resourceID)
+	if err := s.r.Request(ctx, http.MethodPost, path, nil, nil); err != nil {
 		return fmt.Errorf("request: %w", err)
 	}
 	return nil
 }
 
 func (s *Service) UpdateLECert(ctx context.Context, resourceID int64) error {
-	if err := s.r.Request(ctx, http.MethodPost, fmt.Sprintf("/cdn/resources/%d/ssl/le/renew", resourceID), nil, nil); err != nil {
+	path := fmt.Sprintf("/cdn/resources/%d/ssl/le/renew", resourceID)
+	if err := s.r.Request(ctx, http.MethodPost, path, nil, nil); err != nil {
 		return fmt.Errorf("request: %w", err)
 	}
 	return nil
