@@ -48,7 +48,7 @@ const (
 	GroupByClient       GroupBy = "client"
 	GroupByCountry      GroupBy = "country"
 	GroupByClientRegion GroupBy = "client_region"
-	GroupByDatacenter   GroupBy = "datacenter"
+	GroupByDatacenter   GroupBy = "dc"
 )
 
 const (
