@@ -1,8 +1,7 @@
 package edgecenter
 
 type LocationOptions struct {
-	AllowedHTTPMethods          *AllowedHTTPMethods          `json:"allowedHttpMethods"`
-	AllowedHTTPMethodsNew       *AllowedHTTPMethods          `json:"allowed_http_methods"`
+	AllowedHTTPMethods          *AllowedHTTPMethods          `json:"allowed_http_methods"`
 	BrotliCompression           *BrotliCompression           `json:"brotli_compression"`
 	BrowserCacheSettings        *BrowserCacheSettings        `json:"browser_cache_settings"`
 	Cors                        *Cors                        `json:"cors"`
@@ -16,8 +15,7 @@ type LocationOptions struct {
 	GzipCompression             *GzipCompression             `json:"gzip_compression"`
 	HostHeader                  *HostHeader                  `json:"hostHeader"`
 	IgnoreCookie                *IgnoreCookie                `json:"ignore_cookie"`
-	IgnoreQueryString           *IgnoreQueryString           `json:"ignoreQueryString"`
-	IgnoreQueryStringNew        *IgnoreQueryString           `json:"ignore_query_string"`
+	IgnoreQueryString           *IgnoreQueryString           `json:"ignore_query_string"`
 	ImageStack                  *ImageStack                  `json:"image_stack"`
 	IPAddressACL                *IPAddressACL                `json:"ip_address_acl"`
 	LimitBandwidth              *LimitBandwidth              `json:"limit_bandwidth"`
@@ -26,7 +24,6 @@ type LocationOptions struct {
 	QueryParamsWhitelist        *QueryParamsWhitelist        `json:"query_params_whitelist"`
 	RedirectHttpToHttps         *RedirectHttpToHttps         `json:"redirect_http_to_https"`
 	RedirectHttpsToHttp         *RedirectHttpsToHttp         `json:"redirect_https_to_http"`
-	ReferrerACL                 *ReferrerACL                 `json:"referrer_acl"`
 	RefererACL                  *RefererACL                  `json:"referer_acl"`
 	ResponseHeadersHidingPolicy *ResponseHeadersHidingPolicy `json:"response_headers_hiding_policy"`
 	Rewrite                     *Rewrite                     `json:"rewrite"`
@@ -34,8 +31,7 @@ type LocationOptions struct {
 	Slice                       *Slice                       `json:"slice"`
 	SNI                         *SNIOption                   `json:"sni"`
 	Stale                       *Stale                       `json:"stale"`
-	StaticRequestHeaders        *StaticRequestHeaders        `json:"staticRequestHeaders"`
-	StaticRequestHeadersNew     *StaticRequestHeaders        `json:"static_request_headers"`
+	StaticRequestHeaders        *StaticRequestHeaders        `json:"static_request_headers"`
 	StaticResponseHeaders       *StaticResponseHeaders       `json:"static_response_headers"`
 	UserAgentACL                *UserAgentACL                `json:"user_agent_acl"`
 	WebSockets                  *WebSockets                  `json:"websockets"`
@@ -178,12 +174,6 @@ type RedirectHttpToHttps struct {
 type RedirectHttpsToHttp struct {
 	Enabled bool `json:"enabled"`
 	Value   bool `json:"value"`
-}
-
-type ReferrerACL struct {
-	Enabled        bool     `json:"enabled"`
-	PolicyType     string   `json:"policy_type"`
-	ExceptedValues []string `json:"excepted_values"`
 }
 
 type RefererACL struct {
