@@ -2,6 +2,7 @@ package edgecentercdn_go
 
 import (
 	"github.com/Edge-Center/edgecentercdn-go/edgecenter"
+	"github.com/Edge-Center/edgecentercdn-go/lecerts"
 	"github.com/Edge-Center/edgecentercdn-go/origingroups"
 	"github.com/Edge-Center/edgecentercdn-go/resources"
 	"github.com/Edge-Center/edgecentercdn-go/rules"
@@ -14,6 +15,7 @@ import (
 type ClientService interface {
 	Resources() resources.ResourceService
 	Rules() rules.RulesService
+	LECerts() lecerts.LECertService
 	OriginGroups() origingroups.OriginGroupService
 	Shielding() shielding.ShieldingService
 	SSLCerts() sslcerts.SSLCertService
@@ -29,6 +31,7 @@ type Service struct {
 	statisticsService   statistics.ResourceStatisticsService
 	tools               tools.ResourceToolsService
 	rulesService        rules.RulesService
+	leCertsService      lecerts.LECertService
 	originGroupsService origingroups.OriginGroupService
 	shieldingService    shielding.ShieldingService
 	sslCertsService     sslcerts.SSLCertService
@@ -39,6 +42,7 @@ func NewService(r edgecenter.Requester) *Service {
 		r:                   r,
 		resourcesService:    resources.NewService(r),
 		rulesService:        rules.NewService(r),
+		leCertsService:      lecerts.NewService(r),
 		tools:               tools.NewService(r),
 		statisticsService:   statistics.NewService(r),
 		originGroupsService: origingroups.NewService(r),
@@ -54,6 +58,8 @@ func (s *Service) Resources() resources.ResourceService {
 func (s *Service) Rules() rules.RulesService {
 	return s.rulesService
 }
+
+func (s *Service) LECerts() lecerts.LECertService { return s.leCertsService }
 
 func (s *Service) OriginGroups() origingroups.OriginGroupService {
 	return s.originGroupsService
