@@ -9,6 +9,7 @@ type LECertService interface {
 	CreateLECert(ctx context.Context, resourceID int64) error
 	UpdateLECert(ctx context.Context, resourceID int64) error
 	DeleteLECert(ctx context.Context, resourceID int64, force bool) error
+	CancelLECert(ctx context.Context, resourceID int64, active bool) error
 }
 
 type LECertStatus struct {
