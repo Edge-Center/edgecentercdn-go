@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/Edge-Center/edgecentercdn-go/edgecenter"
 	"net/http"
+	"net/url"
 )
 
 type Service struct {
@@ -17,33 +18,68 @@ func NewService(r edgecenter.Requester) *Service {
 
 func (s *Service) GetLECert(ctx context.Context, resourceID int64) (*LECertStatus, error) {
 	var status LECertStatus
-	path := fmt.Sprintf("/cdn/resources/%d/ssl/le/status", resourceID)
-	if err := s.r.Request(ctx, http.MethodGet, path, nil, &status); err != nil {
+
+	u := url.URL{
+		Path: fmt.Sprintf("/cdn/resources/%d/ssl/le/status", resourceID),
+	}
+
+	if err := s.r.Request(ctx, http.MethodGet, u.String(), nil, &status); err != nil {
 		return nil, fmt.Errorf("request: %w", err)
 	}
+
 	return &status, nil
 }
 
 func (s *Service) CreateLECert(ctx context.Context, resourceID int64) error {
-	path := fmt.Sprintf("/cdn/resources/%d/ssl/le/issue", resourceID)
-	if err := s.r.Request(ctx, http.MethodPost, path, nil, nil); err != nil {
+	u := url.URL{
+		Path: fmt.Sprintf("/cdn/resources/%d/ssl/le/issue", resourceID),
+	}
+
+	if err := s.r.Request(ctx, http.MethodPost, u.String(), nil, nil); err != nil {
 		return fmt.Errorf("request: %w", err)
 	}
+
 	return nil
 }
 
 func (s *Service) UpdateLECert(ctx context.Context, resourceID int64) error {
-	path := fmt.Sprintf("/cdn/resources/%d/ssl/le/renew", resourceID)
-	if err := s.r.Request(ctx, http.MethodPost, path, nil, nil); err != nil {
+	u := url.URL{
+		Path: fmt.Sprintf("/cdn/resources/%d/ssl/le/renew", resourceID),
+	}
+
+	if err := s.r.Request(ctx, http.MethodPost, u.String(), nil, nil); err != nil {
 		return fmt.Errorf("request: %w", err)
 	}
+
 	return nil
 }
 
 func (s *Service) DeleteLECert(ctx context.Context, resourceID int64, force bool) error {
-	path := fmt.Sprintf("/cdn/resources/%d/ssl/le/revoke?force=%t", resourceID, force)
-	if err := s.r.Request(ctx, http.MethodPost, path, nil, nil); err != nil {
+	u := url.URL{
+		Path: fmt.Sprintf("/cdn/resources/%d/ssl/le/revoke", resourceID),
+	}
+	q := u.Query()
+	q.Set("force", fmt.Sprintf("%t", force))
+	u.RawQuery = q.Encode()
+
+	if err := s.r.Request(ctx, http.MethodPost, u.String(), nil, nil); err != nil {
 		return fmt.Errorf("request: %w", err)
 	}
+
+	return nil
+}
+
+func (s *Service) CancelLECert(ctx context.Context, resourceID int64, active bool) error {
+	u := url.URL{
+		Path: fmt.Sprintf("/cdn/resources/%d/ssl/le/status", resourceID),
+	}
+	q := u.Query()
+	q.Set("active", fmt.Sprintf("%t", active))
+	u.RawQuery = q.Encode()
+
+	if err := s.r.Request(ctx, http.MethodPut, u.String(), nil, nil); err != nil {
+		return fmt.Errorf("request: %w", err)
+	}
+
 	return nil
 }
