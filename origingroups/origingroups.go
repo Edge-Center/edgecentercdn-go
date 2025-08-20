@@ -42,8 +42,10 @@ type Origin struct {
 }
 
 type Authorization struct {
-	AuthType    string `json:"auth_type"`
-	AccessKeyID string `json:"access_key_id"`
-	SecretKey   string `json:"secret_key"`
-	BucketName  string `json:"bucket_name"`
+	AuthType        string `json:"auth_type"`
+	AccessKeyID     string `json:"access_key_id"`
+	AddressingStyle string `json:"addressing_style"`
+	AwsRegion       string `json:"aws_region"`
+	SecretKey       string `json:"secret_key"`
+	BucketName      string `json:"bucket_name"`
 }
