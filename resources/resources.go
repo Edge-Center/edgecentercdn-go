@@ -53,7 +53,7 @@ type UpdateRequest struct {
 	OriginProtocol     Protocol                    `json:"originProtocol,omitempty"`
 	SecondaryHostnames []string                    `json:"secondaryHostnames,omitempty"`
 	SSlEnabled         bool                        `json:"sslEnabled"`
-	SSLData            int                         `json:"sslData,omitempty"`
+	SSLData            *int                        `json:"sslData"`
 	SSLAutomated       bool                        `json:"ssl_automated"`
 	Options            *edgecenter.ResourceOptions `json:"options,omitempty"`
 }

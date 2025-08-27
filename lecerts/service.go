@@ -73,11 +73,10 @@ func (s *Service) CancelLECert(ctx context.Context, resourceID int64, active boo
 	u := url.URL{
 		Path: fmt.Sprintf("/cdn/resources/%d/ssl/le/status", resourceID),
 	}
-	q := u.Query()
-	q.Set("active", fmt.Sprintf("%t", active))
-	u.RawQuery = q.Encode()
-
-	if err := s.r.Request(ctx, http.MethodPut, u.String(), nil, nil); err != nil {
+	body := map[string]bool{
+		"active": active,
+	}
+	if err := s.r.Request(ctx, http.MethodPut, u.String(), body, nil); err != nil {
 		return fmt.Errorf("request: %w", err)
 	}
 
