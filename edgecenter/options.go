@@ -14,6 +14,7 @@ type LocationOptions struct {
 	GeoAcl                      *GeoAccessPolicy             `json:"geo_acl"`
 	GzipCompression             *GzipCompression             `json:"gzip_compression"`
 	HostHeader                  *HostHeader                  `json:"hostHeader"`
+	HostHeaderNew               *HostHeader                  `json:"host_header"`
 	IgnoreCookie                *IgnoreCookie                `json:"ignore_cookie"`
 	IgnoreQueryString           *IgnoreQueryString           `json:"ignore_query_string"`
 	ImageStack                  *ImageStack                  `json:"image_stack"`
