@@ -13,8 +13,7 @@ type LocationOptions struct {
 	ForwardHostHeader           *ForwardHostHeader           `json:"forward_host_header"`
 	GeoAcl                      *GeoAccessPolicy             `json:"geo_acl"`
 	GzipCompression             *GzipCompression             `json:"gzip_compression"`
-	HostHeader                  *HostHeader                  `json:"hostHeader"`
-	HostHeaderNew               *HostHeader                  `json:"host_header"`
+	HostHeader                  *HostHeader                  `json:"host_header"`
 	IgnoreCookie                *IgnoreCookie                `json:"ignore_cookie"`
 	IgnoreQueryString           *IgnoreQueryString           `json:"ignore_query_string"`
 	ImageStack                  *ImageStack                  `json:"image_stack"`
