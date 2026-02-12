@@ -51,6 +51,7 @@ func (c *Client) Request(ctx context.Context, method, path string, payload inter
 	if err != nil {
 		return fmt.Errorf("do request: %w", err)
 	}
+	defer resp.Body.Close()
 
 	if resp.StatusCode < http.StatusOK || resp.StatusCode >= http.StatusBadRequest {
 		switch resp.StatusCode {

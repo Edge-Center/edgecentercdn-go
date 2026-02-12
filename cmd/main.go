@@ -1,9 +1,10 @@
 package main
 
 import (
+	"os"
+
 	"github.com/Edge-Center/edgecentercdn-go/cmd/cli"
 	"github.com/joho/godotenv"
-	"os"
 )
 
 func main() {

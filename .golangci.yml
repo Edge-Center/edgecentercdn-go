@@ -1,0 +1,71 @@
+version: "2"
+
+run:
+  timeout: 5m
+
+linters:
+  default: standard
+  enable:
+    - bodyclose
+    - copyloopvar
+    - errname
+    - errorlint
+    - exhaustive
+    - goconst
+    - gocritic
+    - gocyclo
+    - misspell
+    - nilerr
+    - noctx
+    - prealloc
+    - revive
+    - unconvert
+    - unparam
+    - whitespace
+  settings:
+    exhaustive:
+      default-signifies-exhaustive: true
+    gocyclo:
+      min-complexity: 30
+    goconst:
+      min-len: 3
+      min-occurrences: 5
+    misspell:
+      locale: US
+    revive:
+      rules:
+        - name: exported
+          disabled: true
+        - name: var-naming
+          disabled: true
+        - name: unused-parameter
+          disabled: true
+  exclusions:
+    generated: lax
+    presets:
+      - comments
+      - std-error-handling
+    rules:
+      - path: _test\.go
+        linters:
+          - goconst
+          - gocyclo
+          - errcheck
+          - unparam
+      - path: cmd/cli/
+        linters:
+          - goconst
+      - linters:
+          - errname
+        text: "ErrorResponse"
+
+formatters:
+  enable:
+    - gofmt
+    - goimports
+  exclusions:
+    generated: strict
+
+issues:
+  max-issues-per-linter: 0
+  max-same-issues: 0

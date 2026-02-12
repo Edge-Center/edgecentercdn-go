@@ -3,8 +3,9 @@ package origingroups
 import (
 	"context"
 	"fmt"
-	"github.com/Edge-Center/edgecentercdn-go/edgecenter"
 	"net/http"
+
+	"github.com/Edge-Center/edgecentercdn-go/edgecenter"
 )
 
 var _ OriginGroupService = (*Service)(nil)
@@ -52,10 +53,8 @@ func (s *Service) Update(ctx context.Context, id int64, req *GroupRequest) (*Ori
 		return nil, fmt.Errorf("request: %w", err)
 	}
 
-	isUpdate := true
-	if group.Authorization == nil {
-		isUpdate = false
-	}
+	isUpdate := group.Authorization != nil
+
 	auth, err := s.manageAuth(ctx, id, isUpdate, req.Authorization)
 	if err != nil {
 		return nil, fmt.Errorf("request: %w", err)
@@ -79,9 +78,8 @@ func (s *Service) Delete(ctx context.Context, id int64) error {
 
 func (s *Service) manageAuth(ctx context.Context, groupID int64, isUpdate bool, reqAuth *Authorization) (*Authorization, error) {
 	if reqAuth == nil {
-		if err := s.r.Request(ctx, http.MethodDelete, fmt.Sprintf("/cdn/source_groups/%d/authorization", groupID), nil, nil); err != nil {
-			return nil, nil
-		}
+		_ = s.r.Request(ctx, http.MethodDelete, fmt.Sprintf("/cdn/source_groups/%d/authorization", groupID), nil, nil)
+		return nil, nil
 	}
 
 	method := http.MethodPost

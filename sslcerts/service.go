@@ -3,8 +3,9 @@ package sslcerts
 import (
 	"context"
 	"fmt"
-	"github.com/Edge-Center/edgecentercdn-go/edgecenter"
 	"net/http"
+
+	"github.com/Edge-Center/edgecentercdn-go/edgecenter"
 )
 
 type Service struct {

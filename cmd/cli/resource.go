@@ -1,9 +1,10 @@
 package cli
 
 import (
+	"os"
+
 	"github.com/Edge-Center/edgecentercdn-go/resources"
 	"github.com/spf13/cobra"
-	"os"
 )
 
 var resourceCmd = &cobra.Command{

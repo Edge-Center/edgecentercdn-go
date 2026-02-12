@@ -2,6 +2,7 @@ package cli
 
 import (
 	"fmt"
+
 	"github.com/Edge-Center/edgecentercdn-go/resources"
 	"github.com/Edge-Center/edgecentercdn-go/tools"
 	"github.com/spf13/cobra"

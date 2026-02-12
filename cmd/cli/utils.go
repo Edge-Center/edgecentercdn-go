@@ -2,9 +2,10 @@ package cli
 
 import (
 	"fmt"
-	"github.com/Edge-Center/edgecentercdn-go/statistics"
 	"os"
 	"strings"
+
+	"github.com/Edge-Center/edgecentercdn-go/statistics"
 )
 
 func printer(data interface{}) error {

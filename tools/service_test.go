@@ -4,13 +4,14 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/Edge-Center/edgecentercdn-go/edgecenter/provider"
 	"io"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
 	"strings"
 	"testing"
+
+	"github.com/Edge-Center/edgecentercdn-go/edgecenter/provider"
 )
 
 func TestService_Purge(t *testing.T) {

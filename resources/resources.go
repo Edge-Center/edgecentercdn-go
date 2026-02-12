@@ -2,8 +2,9 @@ package resources
 
 import (
 	"context"
-	"github.com/Edge-Center/edgecentercdn-go/edgecenter"
 	"time"
+
+	"github.com/Edge-Center/edgecentercdn-go/edgecenter"
 )
 
 type ResourceService interface {

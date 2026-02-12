@@ -1,9 +1,10 @@
 package cli
 
 import (
+	"os"
+
 	"github.com/Edge-Center/edgecentercdn-go/statistics"
 	"github.com/spf13/cobra"
-	"os"
 )
 
 type PrintFormat = string

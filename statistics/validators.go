@@ -101,11 +101,11 @@ func ValidateTimeRange(from, to string) error {
 	}
 
 	if _, err := time.Parse(time.RFC3339, from); err != nil {
-		return fmt.Errorf("invalid 'from' time format: %v", err)
+		return fmt.Errorf("invalid 'from' time format: %w", err)
 	}
 
 	if _, err := time.Parse(time.RFC3339, to); err != nil {
-		return fmt.Errorf("invalid 'to' time format: %v", err)
+		return fmt.Errorf("invalid 'to' time format: %w", err)
 	}
 
 	return nil

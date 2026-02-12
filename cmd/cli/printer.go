@@ -4,23 +4,25 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/Edge-Center/edgecentercdn-go/statistics"
-	"github.com/dustin/go-humanize"
 	"io"
 	"math"
 	"text/tabwriter"
+
+	"github.com/Edge-Center/edgecentercdn-go/statistics"
+	"github.com/dustin/go-humanize"
 )
 
 func PrintAsJSON(writer io.Writer, data interface{}) error {
 	prettyJSON, err := json.MarshalIndent(data, "", "  ")
 	if err != nil {
-		return fmt.Errorf("error marshalling JSON: %w", err)
+		return fmt.Errorf("error marshaling JSON: %w", err)
 	}
 
 	_, err = writer.Write(prettyJSON)
 	return err
 }
 
+//nolint:gocyclo // table printing logic is inherently complex
 func PrintStatisticsTable(writer io.Writer, response *statistics.ResourceStatisticsTableResponse, metrics []statistics.Metric, groupBy []statistics.GroupBy) error {
 	if response == nil {
 		return errors.New("response is nil")
