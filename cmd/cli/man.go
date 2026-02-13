@@ -2,6 +2,7 @@ package cli
 
 import (
 	"fmt"
+
 	"github.com/Edge-Center/edgecentercdn-go/statistics"
 	"github.com/spf13/cobra"
 )

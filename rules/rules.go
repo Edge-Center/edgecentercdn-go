@@ -2,6 +2,7 @@ package rules
 
 import (
 	"context"
+
 	"github.com/Edge-Center/edgecentercdn-go/edgecenter"
 )
 
@@ -18,7 +19,7 @@ type CreateRequest struct {
 	Rule                   string                      `json:"rule,omitempty"`
 	OriginGroup            *int                        `json:"originGroup"`
 	OverrideOriginProtocol *string                     `json:"overrideOriginProtocol"`
-	Weight                 int            	           `json:"weight,omitempty"`
+	Weight                 int                         `json:"weight,omitempty"`
 	Options                *edgecenter.LocationOptions `json:"options,omitempty"`
 }
 
@@ -28,7 +29,7 @@ type UpdateRequest struct {
 	Rule                   string                      `json:"rule,omitempty"`
 	OriginGroup            *int                        `json:"originGroup"`
 	OverrideOriginProtocol *string                     `json:"overrideOriginProtocol"`
-	Weight                 int            	           `json:"weight,omitempty"`
+	Weight                 int                         `json:"weight,omitempty"`
 	Options                *edgecenter.LocationOptions `json:"options,omitempty"`
 }
 
@@ -41,6 +42,6 @@ type Rule struct {
 	OriginProtocol         string                      `json:"originProtocol"`
 	OverrideOriginProtocol *string                     `json:"overrideOriginProtocol"`
 	Pattern                string                      `json:"rule"`
-	Weight                 int            	           `json:"weight"`
+	Weight                 int                         `json:"weight"`
 	Options                *edgecenter.LocationOptions `json:"options,omitempty"`
 }

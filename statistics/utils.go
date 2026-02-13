@@ -70,13 +70,13 @@ func ParseTimeRange(from, to string) (time.Time, time.Time, error) {
 	if from != "" {
 		fromTime, err = time.Parse(time.RFC3339, from)
 		if err != nil {
-			return fromTime, toTime, fmt.Errorf("invalid 'from' time format: %v", err)
+			return fromTime, toTime, fmt.Errorf("invalid 'from' time format: %w", err)
 		}
 	}
 	if to != "" {
 		toTime, err = time.Parse(time.RFC3339, to)
 		if err != nil {
-			return fromTime, toTime, fmt.Errorf("invalid 'to' time format: %v", err)
+			return fromTime, toTime, fmt.Errorf("invalid 'to' time format: %w", err)
 		}
 	}
 	return fromTime, toTime, nil

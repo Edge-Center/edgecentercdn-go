@@ -3,10 +3,11 @@ package cli
 import (
 	"context"
 	"fmt"
-	"github.com/Edge-Center/edgecentercdn-go"
+	"net/http"
+
+	edgecentercdn_go "github.com/Edge-Center/edgecentercdn-go"
 	"github.com/Edge-Center/edgecentercdn-go/edgecenter/provider"
 	"github.com/spf13/cobra"
-	"net/http"
 )
 
 func NewServiceCommandCobra(command *cobra.Command) (*edgecentercdn_go.Service, error) {

@@ -4,11 +4,12 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/Edge-Center/edgecentercdn-go/edgecenter/provider"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
 	"testing"
+
+	"github.com/Edge-Center/edgecentercdn-go/edgecenter/provider"
 )
 
 type ListRequest struct {

@@ -3,8 +3,9 @@ package resources
 import (
 	"context"
 	"fmt"
-	"github.com/Edge-Center/edgecentercdn-go/edgecenter"
 	"net/http"
+
+	"github.com/Edge-Center/edgecentercdn-go/edgecenter"
 )
 
 var _ ResourceService = (*Service)(nil)

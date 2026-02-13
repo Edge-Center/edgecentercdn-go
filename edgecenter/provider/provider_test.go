@@ -3,11 +3,12 @@ package provider
 import (
 	"context"
 	"encoding/json"
-	"github.com/Edge-Center/edgecentercdn-go/edgecenter"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 	"time"
+
+	"github.com/Edge-Center/edgecentercdn-go/edgecenter"
 )
 
 func TestClient_Request(t *testing.T) {

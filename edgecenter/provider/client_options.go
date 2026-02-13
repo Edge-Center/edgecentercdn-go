@@ -2,8 +2,9 @@ package provider
 
 import (
 	"fmt"
-	"github.com/Edge-Center/edgecentercdn-go/edgecenter"
 	"time"
+
+	"github.com/Edge-Center/edgecentercdn-go/edgecenter"
 )
 
 type ClientOption func(*Client)

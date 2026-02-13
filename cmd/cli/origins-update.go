@@ -3,10 +3,11 @@ package cli
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/Edge-Center/edgecentercdn-go/origingroups"
-	"github.com/spf13/cobra"
 	"os"
 	"strings"
+
+	"github.com/Edge-Center/edgecentercdn-go/origingroups"
+	"github.com/spf13/cobra"
 )
 
 var updateOriginCmd = &cobra.Command{

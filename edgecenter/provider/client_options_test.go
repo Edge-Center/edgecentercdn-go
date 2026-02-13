@@ -2,13 +2,14 @@ package provider
 
 import (
 	"context"
-	"github.com/Edge-Center/edgecentercdn-go/edgecenter"
-	"github.com/stretchr/testify/assert"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
 	"testing"
 	"time"
+
+	"github.com/Edge-Center/edgecentercdn-go/edgecenter"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestAuthenticatedHeaders(t *testing.T) {
