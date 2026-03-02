@@ -78,7 +78,9 @@ func (s *Service) Delete(ctx context.Context, id int64) error {
 
 func (s *Service) manageAuth(ctx context.Context, groupID int64, isUpdate bool, reqAuth *Authorization) (*Authorization, error) {
 	if reqAuth == nil {
-		_ = s.r.Request(ctx, http.MethodDelete, fmt.Sprintf("/cdn/source_groups/%d/authorization", groupID), nil, nil)
+		if err := s.r.Request(ctx, http.MethodDelete, fmt.Sprintf("/cdn/source_groups/%d/authorization", groupID), nil, nil); err != nil {
+			return nil, fmt.Errorf("request: %w", err)
+		}
 		return nil, nil
 	}
 
