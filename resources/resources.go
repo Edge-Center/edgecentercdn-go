@@ -40,7 +40,7 @@ type CreateRequest struct {
 	OriginProtocol     Protocol                    `json:"originProtocol,omitempty"`
 	Origin             string                      `json:"origin,omitempty"`
 	SecondaryHostnames []string                    `json:"secondaryHostnames,omitempty"`
-	SSlEnabled         bool                        `json:"sslEnabled"`
+	SSLEnabled         bool                        `json:"sslEnabled"`
 	SSLData            int                         `json:"sslData,omitempty"`
 	SSLAutomated       bool                        `json:"ssl_automated"`
 	IssueLECert        bool                        `json:"le_issue,omitempty"`
@@ -53,7 +53,7 @@ type UpdateRequest struct {
 	OriginGroup        int                         `json:"originGroup"`
 	OriginProtocol     Protocol                    `json:"originProtocol,omitempty"`
 	SecondaryHostnames []string                    `json:"secondaryHostnames,omitempty"`
-	SSlEnabled         bool                        `json:"sslEnabled"`
+	SSLEnabled         bool                        `json:"sslEnabled"`
 	SSLData            *int                        `json:"sslData"`
 	SSLAutomated       bool                        `json:"ssl_automated"`
 	Options            *edgecenter.ResourceOptions `json:"options,omitempty"`
@@ -82,7 +82,7 @@ type Resource struct {
 	SecondaryHostnames []string                    `json:"secondaryHostnames,omitempty"`
 	Shielded           bool                        `json:"shielded,omitempty"`
 	Deleted            bool                        `json:"deleted,omitempty"`
-	SSlEnabled         bool                        `json:"sslEnabled,omitempty"`
+	SSLEnabled         bool                        `json:"sslEnabled,omitempty"`
 	SSLData            int                         `json:"sslData,omitempty"`
 	SSLAutomated       bool                        `json:"ssl_automated,omitempty"`
 	SSLLEEnabled       bool                        `json:"ssl_le_enabled,omitempty"`
