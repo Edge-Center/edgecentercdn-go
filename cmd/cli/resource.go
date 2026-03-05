@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/Edge-Center/edgecentercdn-go/resources"
@@ -35,7 +36,7 @@ var listResourceCmd = &cobra.Command{
 
 		client, err := NewServiceCommandCobra(cmd)
 		if err != nil {
-			return err
+			return fmt.Errorf("resource list: %w", err)
 		}
 
 		ctx := cmd.Context()
@@ -43,7 +44,7 @@ var listResourceCmd = &cobra.Command{
 		result, err := client.Resources().List(ctx, req)
 
 		if err != nil {
-			return err
+			return fmt.Errorf("resource list: %w", err)
 		}
 
 		return PrintAsJSON(os.Stdout, result)

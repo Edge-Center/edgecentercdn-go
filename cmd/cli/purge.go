@@ -18,7 +18,7 @@ var purgeCmd = &cobra.Command{
 
 		client, err := NewServiceCommandCobra(cmd)
 		if err != nil {
-			return err
+			return fmt.Errorf("purge: %w", err)
 		}
 
 		ctx := cmd.Context()
@@ -28,7 +28,7 @@ var purgeCmd = &cobra.Command{
 		if id != 0 {
 			resp, err := client.Tools().Purge(ctx, id, req)
 			if err != nil {
-				return fmt.Errorf("failed to purge: %w", err)
+				return fmt.Errorf("purge: %w", err)
 			}
 
 			if len(resp.Paths) == 0 {
@@ -47,11 +47,11 @@ var purgeCmd = &cobra.Command{
 
 			cdnResources, err := client.Resources().List(ctx, listReq)
 			if err != nil {
-				return fmt.Errorf("failed to list resources for cname %s: %w", cname, err)
+				return fmt.Errorf("purge: failed to list resources for cname %s: %w", cname, err)
 			}
 
 			if len(cdnResources) == 0 {
-				return fmt.Errorf("no resources found for cname %s", cname)
+				return fmt.Errorf("purge: no resources found for cname %s", cname)
 			}
 
 			for _, cdnResource := range cdnResources {

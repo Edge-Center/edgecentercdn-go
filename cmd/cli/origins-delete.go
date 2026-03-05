@@ -14,7 +14,7 @@ var deleteOriginCmd = &cobra.Command{
 
 		client, err := NewServiceCommandCobra(cmd)
 		if err != nil {
-			return err
+			return fmt.Errorf("origins delete: %w", err)
 		}
 
 		ctx := cmd.Context()
@@ -22,7 +22,7 @@ var deleteOriginCmd = &cobra.Command{
 		err = client.OriginGroups().Delete(ctx, id)
 
 		if err != nil {
-			return err
+			return fmt.Errorf("origins delete: %w", err)
 		}
 
 		fmt.Printf("Successfully deleted origin group with ID: %d\n", id)
