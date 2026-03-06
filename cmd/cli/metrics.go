@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/Edge-Center/edgecentercdn-go/statistics"
@@ -35,29 +36,29 @@ var getMetricsCmd = &cobra.Command{
 		output, _ := cmd.Flags().GetString("output")
 
 		if err := validateMetrics(metrics); err != nil {
-			return err
+			return fmt.Errorf("metrics get: %w", err)
 		}
 		if err := validateRegions(regions); err != nil {
-			return err
+			return fmt.Errorf("metrics get: %w", err)
 		}
 		if err := validateGroupBy(groupBy); err != nil {
-			return err
+			return fmt.Errorf("metrics get: %w", err)
 		}
 		if err := validateGranularity(granularity); err != nil {
-			return err
+			return fmt.Errorf("metrics get: %w", err)
 		}
 		if err := validateTimeRange(from, to); err != nil {
-			return err
+			return fmt.Errorf("metrics get: %w", err)
 		}
 
 		fromTime, toTime, err := statistics.ParseTimeRange(from, to)
 		if err != nil {
-			return err
+			return fmt.Errorf("metrics get: %w", err)
 		}
 
 		client, err := NewServiceCommandCobra(cmd)
 		if err != nil {
-			return err
+			return fmt.Errorf("metrics get: %w", err)
 		}
 
 		ctx := cmd.Context()
@@ -77,7 +78,7 @@ var getMetricsCmd = &cobra.Command{
 
 			result, err := client.Statistics().GetTimeSeriesData(ctx, req)
 			if err != nil {
-				return err
+				return fmt.Errorf("metrics get: %w", err)
 			}
 
 			return printer(result)
@@ -96,7 +97,7 @@ var getMetricsCmd = &cobra.Command{
 
 		result, err := client.Statistics().GetTableData(ctx, req)
 		if err != nil {
-			return err
+			return fmt.Errorf("metrics get: %w", err)
 		}
 
 		if output == PrintFormatTable {

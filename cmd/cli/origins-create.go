@@ -16,7 +16,7 @@ var createOriginCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := NewServiceCommandCobra(cmd)
 		if err != nil {
-			return err
+			return fmt.Errorf("origins create: %w", err)
 		}
 
 		input, _ := cmd.Flags().GetBool("input")
@@ -25,7 +25,7 @@ var createOriginCmd = &cobra.Command{
 			req := &origingroups.GroupRequest{}
 			inputReader := cmd.InOrStdin()
 			if err := json.NewDecoder(inputReader).Decode(req); err != nil {
-				return err
+				return fmt.Errorf("origins create: %w", err)
 			}
 
 			ctx := cmd.Context()
@@ -33,7 +33,7 @@ var createOriginCmd = &cobra.Command{
 			result, err := client.OriginGroups().Create(ctx, req)
 
 			if err != nil {
-				return err
+				return fmt.Errorf("origins create: %w", err)
 			}
 
 			return PrintAsJSON(os.Stdout, result)
@@ -103,7 +103,7 @@ var createOriginCmd = &cobra.Command{
 		result, err := client.OriginGroups().Create(ctx, req)
 
 		if err != nil {
-			return err
+			return fmt.Errorf("origins create: %w", err)
 		}
 
 		return PrintAsJSON(os.Stdout, result)

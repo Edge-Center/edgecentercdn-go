@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -14,7 +15,7 @@ var getOriginCmd = &cobra.Command{
 
 		client, err := NewServiceCommandCobra(cmd)
 		if err != nil {
-			return err
+			return fmt.Errorf("origins get: %w", err)
 		}
 
 		ctx := cmd.Context()
@@ -22,7 +23,7 @@ var getOriginCmd = &cobra.Command{
 		result, err := client.OriginGroups().Get(ctx, id)
 
 		if err != nil {
-			return err
+			return fmt.Errorf("origins get: %w", err)
 		}
 
 		return PrintAsJSON(os.Stdout, result)

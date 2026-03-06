@@ -16,7 +16,7 @@ var updateOriginCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := NewServiceCommandCobra(cmd)
 		if err != nil {
-			return err
+			return fmt.Errorf("origins update: %w", err)
 		}
 
 		id, _ := cmd.Flags().GetInt64("id")
@@ -26,7 +26,7 @@ var updateOriginCmd = &cobra.Command{
 			req := &origingroups.GroupRequest{}
 			inputReader := cmd.InOrStdin()
 			if err := json.NewDecoder(inputReader).Decode(req); err != nil {
-				return err
+				return fmt.Errorf("origins update: %w", err)
 			}
 
 			ctx := cmd.Context()
@@ -34,7 +34,7 @@ var updateOriginCmd = &cobra.Command{
 			result, err := client.OriginGroups().Update(ctx, id, req)
 
 			if err != nil {
-				return err
+				return fmt.Errorf("origins update: %w", err)
 			}
 
 			return PrintAsJSON(os.Stdout, result)
@@ -104,7 +104,7 @@ var updateOriginCmd = &cobra.Command{
 		result, err := client.OriginGroups().Update(ctx, id, req)
 
 		if err != nil {
-			return err
+			return fmt.Errorf("origins update: %w", err)
 		}
 
 		return PrintAsJSON(os.Stdout, result)

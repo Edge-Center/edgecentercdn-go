@@ -13,14 +13,14 @@ var whoamiCmd = &cobra.Command{
 
 		client, err := NewServiceCommandCobra(cmd)
 		if err != nil {
-			return err
+			return fmt.Errorf("whoami: %w", err)
 		}
 
 		ctx := cmd.Context()
 
 		username, err := client.Tools().Whoami(ctx)
 		if err != nil {
-			return err
+			return fmt.Errorf("whoami: %w", err)
 		}
 
 		fmt.Println(username)
