@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/Edge-Center/edgecentercdn-go/edgecenter"
@@ -41,8 +42,9 @@ func (c *Client) Request(ctx context.Context, method, path string, payload inter
 		body = payloadBuf
 	}
 
-	// TODO: figure out how to drop trailing slash
-	req, err := http.NewRequestWithContext(ctx, method, c.baseURL+path, body)
+	base := strings.TrimSuffix(c.baseURL, "/")
+	pathTrimmed := strings.TrimPrefix(path, "/")
+	req, err := http.NewRequestWithContext(ctx, method, base+"/"+pathTrimmed, body)
 	if err != nil {
 		return fmt.Errorf("new request: %w", err)
 	}

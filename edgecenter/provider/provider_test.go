@@ -115,6 +115,19 @@ func TestClient_Request(t *testing.T) {
 			},
 			wantErr: true,
 		},
+		{
+			name: "baseURL with trailing slash and path with leading slash produce single slash",
+			fields: fields{
+				httpc: &http.Client{},
+			},
+			args: args{
+				ctx:    context.Background(),
+				method: http.MethodGet,
+				path:   "/test",
+				result: &map[string]interface{}{"key": "value"},
+			},
+			wantErr: false,
+		},
 	}
 
 	for _, tt := range tests {
@@ -141,7 +154,11 @@ func TestClient_Request(t *testing.T) {
 			}))
 			defer ts.Close()
 
-			tt.fields.baseURL = ts.URL
+			if tt.name == "baseURL with trailing slash and path with leading slash produce single slash" {
+				tt.fields.baseURL = ts.URL + "/"
+			} else {
+				tt.fields.baseURL = ts.URL
+			}
 
 			c := &Client{
 				httpc:   tt.fields.httpc,
