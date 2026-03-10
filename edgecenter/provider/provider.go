@@ -22,7 +22,7 @@ type Client struct {
 
 func NewClient(baseURL string, opts ...ClientOption) *Client {
 	httpc := &http.Client{Timeout: time.Minute}
-	c := &Client{httpc: httpc, baseURL: baseURL}
+	c := &Client{httpc: httpc, baseURL: strings.TrimSuffix(baseURL, "/")}
 
 	for _, opt := range opts {
 		opt(c)
@@ -42,9 +42,7 @@ func (c *Client) Request(ctx context.Context, method, path string, payload inter
 		body = payloadBuf
 	}
 
-	base := strings.TrimSuffix(c.baseURL, "/")
-	pathTrimmed := strings.TrimPrefix(path, "/")
-	req, err := http.NewRequestWithContext(ctx, method, base+"/"+pathTrimmed, body)
+	req, err := http.NewRequestWithContext(ctx, method, c.baseURL+"/"+strings.TrimPrefix(path, "/"), body)
 	if err != nil {
 		return fmt.Errorf("new request: %w", err)
 	}
