@@ -3,226 +3,224 @@ package resources
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"net/http/httptest"
-	"reflect"
 	"testing"
 
 	"github.com/Edge-Center/edgecentercdn-go/edgecenter/provider"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
-type ListRequest struct {
-	Filter *ListFilterRequest
-
-	Offset uint
-	Size   uint
+func setupMockServer(t *testing.T, method, path string, statusCode int, response interface{}) *httptest.Server {
+	t.Helper()
+	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		assert.Equal(t, method, r.Method)
+		assert.Equal(t, path, r.URL.Path)
+		w.WriteHeader(statusCode)
+		if response != nil {
+			json.NewEncoder(w).Encode(response)
+		}
+	}))
 }
 
-func TestService_Page(t *testing.T) {
-	tests := []struct {
-		name             string
-		request          *ListRequest
-		response         PaginatedResource
-		expectedResponse PaginatedResource
-		expectedQuery    string
-	}{
-		{
-			name: "Page resources",
-			request: &ListRequest{
-				Offset: 10,
-				Size:   10,
-				Filter: &ListFilterRequest{
-					Fields: []string{"id", "cname"},
-					Status: []ResourceStatus{ActiveResourceStatus, ProcessedResourceStatus},
-				},
+func TestResourceService_Create(t *testing.T) {
+	expected := Resource{
+		ID:     1,
+		Cname:  "cdn.example.com",
+		Status: ActiveResourceStatus,
+		Active: true,
+		Client: 12345,
+	}
+
+	ts := setupMockServer(t, http.MethodPost, "/cdn/resources", http.StatusOK, expected)
+	defer ts.Close()
+
+	service := NewService(provider.NewClient(ts.URL))
+	result, err := service.Create(context.Background(), &CreateRequest{
+		Cname:          "cdn.example.com",
+		OriginProtocol: HTTPProtocol,
+		Origin:         "origin.example.com",
+	})
+
+	require.NoError(t, err)
+	assert.Equal(t, &expected, result)
+}
+
+func TestResourceService_Get(t *testing.T) {
+	expected := Resource{
+		ID:     1,
+		Cname:  "cdn.example.com",
+		Status: ActiveResourceStatus,
+		Active: true,
+		Client: 12345,
+	}
+
+	ts := setupMockServer(t, http.MethodGet, "/cdn/resources/1", http.StatusOK, expected)
+	defer ts.Close()
+
+	service := NewService(provider.NewClient(ts.URL))
+	result, err := service.Get(context.Background(), 1)
+
+	require.NoError(t, err)
+	assert.Equal(t, &expected, result)
+}
+
+func TestResourceService_Update(t *testing.T) {
+	expected := Resource{
+		ID:     1,
+		Cname:  "cdn.example.com",
+		Status: ActiveResourceStatus,
+		Active: true,
+	}
+
+	ts := setupMockServer(t, http.MethodPut, "/cdn/resources/1", http.StatusOK, expected)
+	defer ts.Close()
+
+	service := NewService(provider.NewClient(ts.URL))
+	result, err := service.Update(context.Background(), 1, &UpdateRequest{Active: true})
+
+	require.NoError(t, err)
+	assert.Equal(t, &expected, result)
+}
+
+func TestResourceService_Delete(t *testing.T) {
+	ts := setupMockServer(t, http.MethodDelete, "/cdn/resources/1", http.StatusOK, nil)
+	defer ts.Close()
+
+	service := NewService(provider.NewClient(ts.URL))
+	err := service.Delete(context.Background(), 1)
+
+	require.NoError(t, err)
+}
+
+func TestResourceService_Page(t *testing.T) {
+	expected := PaginatedResource{
+		Count: 12,
+		Results: []Resource{
+			{
+				ID:          1,
+				Status:      ActiveResourceStatus,
+				Active:      true,
+				Client:      12345,
+				OriginGroup: 1,
+				Cname:       "cdn1.example.com",
 			},
-			response: PaginatedResource{
-				Count: 12,
-				Results: []Resource{
-					{
-						ID:          1,
-						Status:      ActiveResourceStatus,
-						Active:      true,
-						Client:      12345,
-						OriginGroup: 1,
-						Cname:       "cdn1.example.com",
-					},
-					{
-						ID:          2,
-						Status:      SuspendedResourceStatus,
-						Active:      false,
-						Client:      12345,
-						OriginGroup: 2,
-						Cname:       "cdn2.example.com",
-					},
-				},
+			{
+				ID:          2,
+				Status:      SuspendedResourceStatus,
+				Active:      false,
+				Client:      12345,
+				OriginGroup: 2,
+				Cname:       "cdn2.example.com",
 			},
-			expectedResponse: PaginatedResource{
-				Count: 12,
-				Results: []Resource{
-					{
-						ID:          1,
-						Status:      ActiveResourceStatus,
-						Active:      true,
-						Client:      12345,
-						OriginGroup: 1,
-						Cname:       "cdn1.example.com",
-					},
-					{
-						ID:          2,
-						Status:      SuspendedResourceStatus,
-						Active:      false,
-						Client:      12345,
-						OriginGroup: 2,
-						Cname:       "cdn2.example.com",
-					},
-				},
-			},
-			expectedQuery: "fields=id%2Ccname&offset=10&size=10&status=active%2Cprocessed",
 		},
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			mockHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				if r.URL.Path != "/cdn/resources" || r.Method != http.MethodGet {
-					http.Error(w, "not found", http.StatusNotFound)
-					return
-				}
+	ts := setupMockServer(t, http.MethodGet, "/cdn/resources", http.StatusOK, expected)
+	defer ts.Close()
 
-				w.Header().Set("Content-Type", "application/json")
+	service := NewService(provider.NewClient(ts.URL))
+	result, err := service.Page(context.Background(), 10, 10, &ListFilterRequest{
+		Fields: []string{"id", "cname"},
+		Status: []ResourceStatus{ActiveResourceStatus, ProcessedResourceStatus},
+	})
 
-				if r.URL.RawQuery != tt.expectedQuery {
-					w.WriteHeader(http.StatusBadRequest)
-					errorResponse := fmt.Sprintf("invalid query parameters: expected %+v, got %+v", tt.expectedQuery, r.URL.RawQuery)
-					_ = json.NewEncoder(w).Encode(map[string]string{"message": errorResponse})
-					return
-				}
-
-				err := json.NewEncoder(w).Encode(tt.response)
-				if err != nil {
-					w.WriteHeader(http.StatusBadRequest)
-
-					_ = json.NewEncoder(w).Encode(map[string]string{"message": fmt.Sprintf("invalid response %s", err.Error())})
-					return
-				}
-			})
-
-			ts := httptest.NewServer(mockHandler)
-			defer ts.Close()
-
-			service := NewService(provider.NewClient(ts.URL))
-
-			ctx := context.Background()
-
-			response, err := service.Page(ctx, tt.request.Offset, tt.request.Size, tt.request.Filter)
-			if err != nil {
-				t.Fatalf("unexpected error: %v", err)
-			}
-
-			if !reflect.DeepEqual(response, &tt.expectedResponse) {
-				t.Errorf("expected %+v, got %+v", &tt.expectedResponse, response)
-			}
-		})
-	}
+	require.NoError(t, err)
+	assert.Equal(t, &expected, result)
 }
 
-func TestService_List(t *testing.T) {
-	tests := []struct {
-		name          string
-		request       *ListFilterRequest
-		response      []Resource
-		expected      []Resource
-		expectedQuery string
-	}{
+func TestResourceService_List(t *testing.T) {
+	expected := []Resource{
 		{
-			name: "List resources",
-			request: &ListFilterRequest{
-				Fields: []string{"id", "cname"},
-				Status: []ResourceStatus{ActiveResourceStatus, ProcessedResourceStatus},
-			},
-			response: []Resource{
-				{
-					ID:          1,
-					Status:      ActiveResourceStatus,
-					Active:      true,
-					Client:      12345,
-					OriginGroup: 1,
-					Cname:       "cdn1.example.com",
-				},
-				{
-					ID:          2,
-					Status:      SuspendedResourceStatus,
-					Active:      false,
-					Client:      12345,
-					OriginGroup: 2,
-					Cname:       "cdn2.example.com",
-				},
-			},
-			expected: []Resource{
-				{
-					ID:          1,
-					Status:      ActiveResourceStatus,
-					Active:      true,
-					Client:      12345,
-					OriginGroup: 1,
-					Cname:       "cdn1.example.com",
-				},
-				{
-					ID:          2,
-					Status:      SuspendedResourceStatus,
-					Active:      false,
-					Client:      12345,
-					OriginGroup: 2,
-					Cname:       "cdn2.example.com",
-				},
-			},
-			expectedQuery: "fields=id%2Ccname&status=active%2Cprocessed",
+			ID:          1,
+			Status:      ActiveResourceStatus,
+			Active:      true,
+			Client:      12345,
+			OriginGroup: 1,
+			Cname:       "cdn1.example.com",
+		},
+		{
+			ID:          2,
+			Status:      SuspendedResourceStatus,
+			Active:      false,
+			Client:      12345,
+			OriginGroup: 2,
+			Cname:       "cdn2.example.com",
 		},
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			mockHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				if r.URL.Path != "/cdn/resources" || r.Method != http.MethodGet {
-					http.Error(w, "not found", http.StatusNotFound)
-					return
-				}
+	ts := setupMockServer(t, http.MethodGet, "/cdn/resources", http.StatusOK, expected)
+	defer ts.Close()
 
-				w.Header().Set("Content-Type", "application/json")
+	service := NewService(provider.NewClient(ts.URL))
+	result, err := service.List(context.Background(), &ListFilterRequest{
+		Fields: []string{"id", "cname"},
+		Status: []ResourceStatus{ActiveResourceStatus, ProcessedResourceStatus},
+	})
 
-				if r.URL.RawQuery != tt.expectedQuery {
-					w.WriteHeader(http.StatusBadRequest)
-					errorResponse := fmt.Sprintf("invalid query parameters: expected %+v, got %+v", tt.expectedQuery, r.URL.RawQuery)
-					_ = json.NewEncoder(w).Encode(map[string]string{"message": errorResponse})
-					return
-				}
+	require.NoError(t, err)
+	assert.Equal(t, expected, result)
+}
 
-				err := json.NewEncoder(w).Encode(tt.response)
-				if err != nil {
-					w.WriteHeader(http.StatusBadRequest)
+func TestResourceService_Count(t *testing.T) {
+	ts := setupMockServer(t, http.MethodGet, "/cdn/resources", http.StatusOK, PaginatedResource{Count: 42})
+	defer ts.Close()
 
-					_ = json.NewEncoder(w).Encode(map[string]string{"message": fmt.Sprintf("invalid response %s", err.Error())})
-					return
-				}
-			})
+	service := NewService(provider.NewClient(ts.URL))
+	count, err := service.Count(context.Background(), nil)
 
-			ts := httptest.NewServer(mockHandler)
-			defer ts.Close()
+	require.NoError(t, err)
+	assert.Equal(t, uint(42), count)
+}
 
-			service := NewService(provider.NewClient(ts.URL))
+func TestResourceService_Create_Error(t *testing.T) {
+	ts := setupMockServer(t, http.MethodPost, "/cdn/resources", http.StatusNotFound, nil)
+	defer ts.Close()
 
-			ctx := context.Background()
+	service := NewService(provider.NewClient(ts.URL))
+	_, err := service.Create(context.Background(), &CreateRequest{Cname: "cdn.example.com"})
 
-			result, err := service.List(ctx, tt.request)
-			if err != nil {
-				t.Fatalf("unexpected error: %v", err)
-			}
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "request:")
+}
 
-			if !reflect.DeepEqual(result, tt.expected) {
-				t.Errorf("expected %+v,\n got %+v", &tt.expected, result)
-			}
-		})
-	}
+func TestResourceService_NotFound(t *testing.T) {
+	ts := setupMockServer(t, http.MethodGet, "/cdn/resources/999", http.StatusNotFound, nil)
+	defer ts.Close()
+
+	service := NewService(provider.NewClient(ts.URL))
+	_, err := service.Get(context.Background(), 999)
+
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "not found")
+}
+
+func TestResourceService_ServerError(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]string{"Message": "server error"})
+	}))
+	defer ts.Close()
+
+	service := NewService(provider.NewClient(ts.URL))
+	_, err := service.Get(context.Background(), 1)
+
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "server error")
+}
+
+func TestResourceService_InvalidJSON(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("not json"))
+	}))
+	defer ts.Close()
+
+	service := NewService(provider.NewClient(ts.URL))
+	_, err := service.Get(context.Background(), 1)
+
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "decode")
 }
