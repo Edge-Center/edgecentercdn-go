@@ -6,6 +6,12 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+type ListRequest struct {
+	Filter *ListFilterRequest
+	Offset uint
+	Size   uint
+}
+
 func Test_buildListPath(t *testing.T) {
 	tests := []struct {
 		name     string
