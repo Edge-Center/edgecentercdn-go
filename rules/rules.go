@@ -2,6 +2,7 @@ package rules
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/Edge-Center/edgecentercdn-go/edgecenter"
 )
@@ -44,4 +45,15 @@ type Rule struct {
 	Pattern                string                      `json:"rule"`
 	Weight                 int                         `json:"weight"`
 	Options                *edgecenter.LocationOptions `json:"options,omitempty"`
+}
+
+func (r *CreateRequest) Validate() error {
+	if r.Name == "" {
+		return fmt.Errorf("name is required")
+	}
+	if r.Rule == "" {
+		return fmt.Errorf("rule is required")
+	}
+
+	return nil
 }

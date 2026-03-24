@@ -21,6 +21,10 @@ func NewService(r edgecenter.Requester) *Service {
 func (s *Service) Create(ctx context.Context, resourceID int64, req *CreateRequest) (*Rule, error) {
 	var rule Rule
 
+	if err := req.Validate(); err != nil {
+		return nil, fmt.Errorf("validate rule create request: %w", err)
+	}
+
 	path := fmt.Sprintf("/cdn/resources/%d/locations", resourceID)
 	if err := s.r.Request(ctx, http.MethodPost, path, req, &rule); err != nil {
 		return nil, fmt.Errorf("request: %w", err)

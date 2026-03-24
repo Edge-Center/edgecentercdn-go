@@ -19,6 +19,10 @@ func NewService(r edgecenter.Requester) *Service {
 func (s *Service) Create(ctx context.Context, req *CreateRequest) (*Cert, error) {
 	var cert Cert
 
+	if err := req.Validate(); err != nil {
+		return nil, fmt.Errorf("validate ssl cert create request: %w", err)
+	}
+
 	if err := s.r.Request(ctx, http.MethodPost, "/cdn/ssl/certificates", req, &cert); err != nil {
 		return nil, fmt.Errorf("request: %w", err)
 	}

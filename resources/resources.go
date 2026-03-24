@@ -2,6 +2,7 @@ package resources
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/Edge-Center/edgecentercdn-go/edgecenter"
@@ -95,4 +96,15 @@ type Resource struct {
 type PaginatedResource struct {
 	Count   uint       `json:"count"`
 	Results []Resource `json:"results"`
+}
+
+func (r *CreateRequest) Validate() error {
+	if r.Cname == "" {
+		return fmt.Errorf("cname is required")
+	}
+	if r.OriginGroup == 0 && r.Origin == "" {
+		return fmt.Errorf("origin_group is required")
+	}
+
+	return nil
 }

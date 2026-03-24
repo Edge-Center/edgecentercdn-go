@@ -102,8 +102,80 @@ func TestSSLCertService_BadRequest(t *testing.T) {
 	defer ts.Close()
 
 	service := NewService(provider.NewClient(ts.URL))
-	_, err := service.Create(context.Background(), &CreateRequest{})
+	_, err := service.Create(context.Background(), &CreateRequest{
+		Name:       "test-cert",
+		Cert:       "-----BEGIN CERTIFICATE-----\nMIIB...",
+		PrivateKey: "-----BEGIN PRIVATE KEY-----\nMIIE...",
+	})
 
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "invalid certificate")
+}
+
+func TestSSLCertService_Create_ValidateError(t *testing.T) {
+	service := NewService(provider.NewClient("http://example.com"))
+
+	result, err := service.Create(context.Background(), &CreateRequest{
+		Name: "test-cert",
+		Cert: "-----BEGIN CERTIFICATE-----\nMIIB...",
+	})
+
+	require.Error(t, err)
+	assert.Nil(t, result)
+	assert.Equal(t, "validate ssl cert create request: sslPrivateKey is required", err.Error())
+}
+
+func TestCreateRequest_Validate(t *testing.T) {
+	tests := []struct {
+		name    string
+		req     *CreateRequest
+		wantErr string
+	}{
+		{
+			name: "valid request",
+			req: &CreateRequest{
+				Name:       "test-cert",
+				Cert:       "-----BEGIN CERTIFICATE-----\nMIIB...",
+				PrivateKey: "-----BEGIN PRIVATE KEY-----\nMIIE...",
+			},
+		},
+		{
+			name: "missing name",
+			req: &CreateRequest{
+				Cert:       "-----BEGIN CERTIFICATE-----\nMIIB...",
+				PrivateKey: "-----BEGIN PRIVATE KEY-----\nMIIE...",
+			},
+			wantErr: "name is required",
+		},
+		{
+			name: "missing cert",
+			req: &CreateRequest{
+				Name:       "test-cert",
+				PrivateKey: "-----BEGIN PRIVATE KEY-----\nMIIE...",
+			},
+			wantErr: "sslCertificate is required",
+		},
+		{
+			name: "missing private key",
+			req: &CreateRequest{
+				Name: "test-cert",
+				Cert: "-----BEGIN CERTIFICATE-----\nMIIB...",
+			},
+			wantErr: "sslPrivateKey is required",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := tt.req.Validate()
+
+			if tt.wantErr == "" {
+				require.NoError(t, err)
+				return
+			}
+
+			require.Error(t, err)
+			assert.Equal(t, tt.wantErr, err.Error())
+		})
+	}
 }
