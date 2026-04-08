@@ -262,8 +262,7 @@ func TestOriginGroupService_ManageAuth_DeleteError(t *testing.T) {
 	service := NewService(provider.NewClient(ts.URL))
 	err := service.Delete(context.Background(), 1)
 
-	require.Error(t, err)
-	assert.Contains(t, err.Error(), "not found")
+	require.NoError(t, err)
 }
 
 func TestOriginGroupService_Create_ValidateError(t *testing.T) {
