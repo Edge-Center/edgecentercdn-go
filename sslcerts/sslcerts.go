@@ -2,6 +2,7 @@ package sslcerts
 
 import (
 	"context"
+	"fmt"
 	"time"
 )
 
@@ -27,4 +28,18 @@ type CreateRequest struct {
 	Name       string `json:"name"`
 	Cert       string `json:"sslCertificate"`
 	PrivateKey string `json:"sslPrivateKey"`
+}
+
+func (r *CreateRequest) Validate() error {
+	if r.Name == "" {
+		return fmt.Errorf("name is required")
+	}
+	if r.Cert == "" {
+		return fmt.Errorf("sslCertificate is required")
+	}
+	if r.PrivateKey == "" {
+		return fmt.Errorf("sslPrivateKey is required")
+	}
+
+	return nil
 }

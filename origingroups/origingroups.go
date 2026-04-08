@@ -2,6 +2,7 @@ package origingroups
 
 import (
 	"context"
+	"fmt"
 )
 
 type OriginGroupService interface {
@@ -48,4 +49,15 @@ type Authorization struct {
 	AwsRegion       string `json:"aws_region"`
 	SecretKey       string `json:"secret_key"`
 	BucketName      string `json:"bucket_name"`
+}
+
+func (r *GroupRequest) Validate() error {
+	if r.Name == "" {
+		return fmt.Errorf("name is required")
+	}
+	if len(r.Origins) == 0 {
+		return fmt.Errorf("origins is required")
+	}
+
+	return nil
 }

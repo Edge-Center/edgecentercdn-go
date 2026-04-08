@@ -21,6 +21,10 @@ func NewService(r edgecenter.Requester) *Service {
 func (s *Service) Create(ctx context.Context, req *GroupRequest) (*OriginGroup, error) {
 	var group OriginGroup
 
+	if err := req.Validate(); err != nil {
+		return nil, fmt.Errorf("validate origin group request: %w", err)
+	}
+
 	if err := s.r.Request(ctx, http.MethodPost, "/cdn/source_groups", req, &group); err != nil {
 		return nil, fmt.Errorf("request: %w", err)
 	}

@@ -39,6 +39,7 @@ func TestResourceService_Create(t *testing.T) {
 	service := NewService(provider.NewClient(ts.URL))
 	result, err := service.Create(context.Background(), &CreateRequest{
 		Cname:          "cdn.example.com",
+		OriginGroup:    1,
 		OriginProtocol: HTTPProtocol,
 		Origin:         "origin.example.com",
 	})
@@ -179,7 +180,10 @@ func TestResourceService_Create_Error(t *testing.T) {
 	defer ts.Close()
 
 	service := NewService(provider.NewClient(ts.URL))
-	_, err := service.Create(context.Background(), &CreateRequest{Cname: "cdn.example.com"})
+	_, err := service.Create(context.Background(), &CreateRequest{
+		Cname:       "cdn.example.com",
+		OriginGroup: 1,
+	})
 
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "request:")
@@ -223,4 +227,60 @@ func TestResourceService_InvalidJSON(t *testing.T) {
 
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "decode")
+}
+
+func TestResourceService_Create_ValidateError(t *testing.T) {
+	service := NewService(provider.NewClient("http://example.com"))
+
+	result, err := service.Create(context.Background(), &CreateRequest{
+		Cname: "cdn.example.com",
+	})
+
+	require.Error(t, err)
+	assert.Nil(t, result)
+	assert.Equal(t, "validate resource create request: origin_group is required", err.Error())
+}
+
+func TestCreateRequest_Validate(t *testing.T) {
+	tests := []struct {
+		name    string
+		req     *CreateRequest
+		wantErr string
+	}{
+		{
+			name: "valid request",
+			req: &CreateRequest{
+				Cname:       "cdn.example.com",
+				OriginGroup: 1,
+			},
+		},
+		{
+			name: "missing cname",
+			req: &CreateRequest{
+				OriginGroup: 1,
+			},
+			wantErr: "cname is required",
+		},
+		{
+			name: "missing origin group",
+			req: &CreateRequest{
+				Cname: "cdn.example.com",
+			},
+			wantErr: "origin_group is required",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := tt.req.Validate()
+
+			if tt.wantErr == "" {
+				require.NoError(t, err)
+				return
+			}
+
+			require.Error(t, err)
+			assert.Equal(t, tt.wantErr, err.Error())
+		})
+	}
 }

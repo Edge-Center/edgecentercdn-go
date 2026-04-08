@@ -121,7 +121,10 @@ func TestOriginGroupService_Create_Error(t *testing.T) {
 	defer ts.Close()
 
 	service := NewService(provider.NewClient(ts.URL))
-	_, err := service.Create(context.Background(), &GroupRequest{Name: "test"})
+	_, err := service.Create(context.Background(), &GroupRequest{
+		Name:    "test",
+		Origins: []OriginRequest{{Source: "origin.example.com", Enabled: true}},
+	})
 
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "request:")
@@ -261,4 +264,60 @@ func TestOriginGroupService_ManageAuth_DeleteError(t *testing.T) {
 
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "not found")
+}
+
+func TestOriginGroupService_Create_ValidateError(t *testing.T) {
+	service := NewService(provider.NewClient("http://example.com"))
+
+	result, err := service.Create(context.Background(), &GroupRequest{
+		Name: "test-group",
+	})
+
+	require.Error(t, err)
+	assert.Nil(t, result)
+	assert.Equal(t, "validate origin group request: origins is required", err.Error())
+}
+
+func TestGroupRequest_Validate(t *testing.T) {
+	tests := []struct {
+		name    string
+		req     *GroupRequest
+		wantErr string
+	}{
+		{
+			name: "valid request",
+			req: &GroupRequest{
+				Name:    "test-group",
+				Origins: []OriginRequest{{Source: "origin.example.com", Enabled: true}},
+			},
+		},
+		{
+			name: "missing name",
+			req: &GroupRequest{
+				Origins: []OriginRequest{{Source: "origin.example.com", Enabled: true}},
+			},
+			wantErr: "name is required",
+		},
+		{
+			name: "missing origins",
+			req: &GroupRequest{
+				Name: "test-group",
+			},
+			wantErr: "origins is required",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := tt.req.Validate()
+
+			if tt.wantErr == "" {
+				require.NoError(t, err)
+				return
+			}
+
+			require.Error(t, err)
+			assert.Equal(t, tt.wantErr, err.Error())
+		})
+	}
 }

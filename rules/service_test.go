@@ -123,8 +123,67 @@ func TestRulesService_BadRequest(t *testing.T) {
 	defer ts.Close()
 
 	service := NewService(provider.NewClient(ts.URL))
-	_, err := service.Create(context.Background(), 100, &CreateRequest{})
+	_, err := service.Create(context.Background(), 100, &CreateRequest{
+		Name: "test-rule",
+		Rule: "/images/*",
+	})
 
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "invalid request")
+}
+
+func TestRulesService_Create_ValidateError(t *testing.T) {
+	service := NewService(provider.NewClient("http://example.com"))
+
+	result, err := service.Create(context.Background(), 100, &CreateRequest{
+		Name: "test-rule",
+	})
+
+	require.Error(t, err)
+	assert.Nil(t, result)
+	assert.Equal(t, "validate rule create request: rule is required", err.Error())
+}
+
+func TestCreateRequest_Validate(t *testing.T) {
+	tests := []struct {
+		name    string
+		req     *CreateRequest
+		wantErr string
+	}{
+		{
+			name: "valid request",
+			req: &CreateRequest{
+				Name: "test-rule",
+				Rule: "/images/*",
+			},
+		},
+		{
+			name: "missing name",
+			req: &CreateRequest{
+				Rule: "/images/*",
+			},
+			wantErr: "name is required",
+		},
+		{
+			name: "missing rule",
+			req: &CreateRequest{
+				Name: "test-rule",
+			},
+			wantErr: "rule is required",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := tt.req.Validate()
+
+			if tt.wantErr == "" {
+				require.NoError(t, err)
+				return
+			}
+
+			require.Error(t, err)
+			assert.Equal(t, tt.wantErr, err.Error())
+		})
+	}
 }
