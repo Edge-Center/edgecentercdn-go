@@ -3,6 +3,7 @@ package provider
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -10,6 +11,8 @@ import (
 	"time"
 
 	"github.com/Edge-Center/edgecentercdn-go/edgecenter"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestClient_Request(t *testing.T) {
@@ -186,4 +189,134 @@ func TestClient_Request(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestClient_Request_NotFoundMappedToSentinel(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusNotFound)
+		_ = json.NewEncoder(w).Encode(map[string]string{
+			"Message": "resource does not exist",
+		})
+	}))
+	defer ts.Close()
+
+	client := NewClient(ts.URL)
+
+	err := client.Request(context.Background(), http.MethodGet, "/test", nil, nil)
+	require.Error(t, err)
+	assert.True(t, errors.Is(err, edgecenter.ErrNotFound))
+
+	var apiErr *edgecenter.APIError
+	require.True(t, errors.As(err, &apiErr))
+	assert.Equal(t, http.StatusNotFound, apiErr.StatusCode)
+	assert.Equal(t, "resource does not exist", apiErr.Message)
+}
+
+func TestClient_Request_BadRequestMappedToSentinel(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusBadRequest)
+		_ = json.NewEncoder(w).Encode(map[string]string{
+			"Message": "invalid request",
+		})
+	}))
+	defer ts.Close()
+
+	client := NewClient(ts.URL)
+
+	err := client.Request(context.Background(), http.MethodGet, "/test", nil, nil)
+	require.Error(t, err)
+	assert.True(t, errors.Is(err, edgecenter.ErrBadRequest))
+
+	var apiErr *edgecenter.APIError
+	require.True(t, errors.As(err, &apiErr))
+	assert.Equal(t, http.StatusBadRequest, apiErr.StatusCode)
+	assert.Equal(t, "invalid request", apiErr.Message)
+}
+
+func TestClient_Request_ConflictMappedToSentinel(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusConflict)
+		_ = json.NewEncoder(w).Encode(map[string]string{
+			"Message": "resource already exists",
+		})
+	}))
+	defer ts.Close()
+
+	client := NewClient(ts.URL)
+
+	err := client.Request(context.Background(), http.MethodGet, "/test", nil, nil)
+	require.Error(t, err)
+	assert.True(t, errors.Is(err, edgecenter.ErrConflict))
+
+	var apiErr *edgecenter.APIError
+	require.True(t, errors.As(err, &apiErr))
+	assert.Equal(t, http.StatusConflict, apiErr.StatusCode)
+	assert.Equal(t, "resource already exists", apiErr.Message)
+}
+
+func TestClient_Request_RateLimitMappedToSentinel(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusTooManyRequests)
+		_ = json.NewEncoder(w).Encode(map[string]string{
+			"Message": "too many requests",
+		})
+	}))
+	defer ts.Close()
+
+	client := NewClient(ts.URL)
+
+	err := client.Request(context.Background(), http.MethodGet, "/test", nil, nil)
+	require.Error(t, err)
+	assert.True(t, errors.Is(err, edgecenter.ErrRateLimit))
+
+	var apiErr *edgecenter.APIError
+	require.True(t, errors.As(err, &apiErr))
+	assert.Equal(t, http.StatusTooManyRequests, apiErr.StatusCode)
+	assert.Equal(t, "too many requests", apiErr.Message)
+}
+
+func TestClient_Request_PlainTextErrorResponse(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusUnauthorized)
+		_, _ = w.Write([]byte("unauthorized"))
+	}))
+	defer ts.Close()
+
+	client := NewClient(ts.URL)
+
+	err := client.Request(context.Background(), http.MethodGet, "/test", nil, nil)
+	require.Error(t, err)
+	assert.True(t, errors.Is(err, edgecenter.ErrUnauthorized))
+
+	var apiErr *edgecenter.APIError
+	require.True(t, errors.As(err, &apiErr))
+	assert.Equal(t, http.StatusUnauthorized, apiErr.StatusCode)
+	assert.Equal(t, "unauthorized", apiErr.Message)
+}
+
+func TestClient_Request_LowercaseJSONErrorResponse(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusForbidden)
+		_ = json.NewEncoder(w).Encode(map[string]interface{}{
+			"message": "access denied",
+			"errors": map[string][]string{
+				"token": {"invalid token"},
+			},
+		})
+	}))
+	defer ts.Close()
+
+	client := NewClient(ts.URL)
+
+	err := client.Request(context.Background(), http.MethodGet, "/test", nil, nil)
+	require.Error(t, err)
+	assert.True(t, errors.Is(err, edgecenter.ErrForbidden))
+
+	var apiErr *edgecenter.APIError
+	require.True(t, errors.As(err, &apiErr))
+	assert.Equal(t, http.StatusForbidden, apiErr.StatusCode)
+	assert.Equal(t, "access denied", apiErr.Message)
+	assert.Len(t, apiErr.Details, 1)
+	assert.Equal(t, "token", apiErr.Details[0].Field)
+	assert.Equal(t, []string{"invalid token"}, apiErr.Details[0].Messages)
 }

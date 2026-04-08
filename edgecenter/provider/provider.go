@@ -54,18 +54,20 @@ func (c *Client) Request(ctx context.Context, method, path string, payload inter
 	defer resp.Body.Close()
 
 	if resp.StatusCode < http.StatusOK || resp.StatusCode >= http.StatusBadRequest {
-		switch resp.StatusCode {
-		case http.StatusNotFound:
-			return fmt.Errorf("resource not found at path: %s", path)
-		case http.StatusUnauthorized:
-			return fmt.Errorf("unauthorized. Invalid or expired credentials, please check your authentication setup")
-		default:
-			var errResp edgecenter.ErrorResponse
-			if err := json.NewDecoder(resp.Body).Decode(&errResp); err != nil {
-				return fmt.Errorf("decode err resp %d: %w", resp.StatusCode, err)
-			}
-			return &errResp
+		apiErr := edgecenter.NewAPIError(resp.StatusCode, sentinelForStatusCode(resp.StatusCode))
+
+		body, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return fmt.Errorf("read error response %d: %w", resp.StatusCode, err)
 		}
+
+		if len(body) > 0 {
+			if err := json.Unmarshal(body, apiErr); err != nil {
+				apiErr.Message = strings.TrimSpace(string(body))
+			}
+		}
+
+		return fmt.Errorf("%s %s: %w", method, path, apiErr)
 	}
 
 	if result != nil {
@@ -75,6 +77,25 @@ func (c *Client) Request(ctx context.Context, method, path string, payload inter
 	}
 
 	return nil
+}
+
+func sentinelForStatusCode(statusCode int) error {
+	switch statusCode {
+	case http.StatusBadRequest:
+		return edgecenter.ErrBadRequest
+	case http.StatusUnauthorized:
+		return edgecenter.ErrUnauthorized
+	case http.StatusForbidden:
+		return edgecenter.ErrForbidden
+	case http.StatusNotFound:
+		return edgecenter.ErrNotFound
+	case http.StatusConflict:
+		return edgecenter.ErrConflict
+	case http.StatusTooManyRequests:
+		return edgecenter.ErrRateLimit
+	default:
+		return nil
+	}
 }
 
 func (c *Client) do(req *http.Request) (*http.Response, error) {
