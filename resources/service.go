@@ -65,7 +65,7 @@ func (s *Service) Page(ctx context.Context, offset uint, size uint, filter *List
 	path := buildListPath(offset, size, filter)
 
 	if err := s.r.Request(ctx, http.MethodGet, path, nil, &response); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("request: %w", err)
 	}
 
 	return &response, nil
@@ -77,7 +77,7 @@ func (s *Service) List(ctx context.Context, filter *ListFilterRequest) ([]Resour
 	path := buildListPath(0, 0, filter)
 
 	if err := s.r.Request(ctx, http.MethodGet, path, nil, &response); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("request: %w", err)
 	}
 
 	return response, nil
