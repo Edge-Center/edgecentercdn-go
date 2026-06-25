@@ -9,6 +9,9 @@ jobs:
   build:
     name: Build Snapshot
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
 
     steps:
       - name: Checkout code
@@ -42,4 +45,4 @@ jobs:
           message: |
             ✅ Snapshot build is ready!  
             [Download artifacts](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
-          comment_tag: "snapshot-build"
+          comment-tag: "snapshot-build"
