@@ -5,6 +5,7 @@ import "context"
 type ResourceToolsService interface {
 	Purge(ctx context.Context, id int64, req *PurgeRequest) (*PurgeResponse, error)
 	Whoami(ctx context.Context) (string, error)
+	ClientInfo(ctx context.Context) (*ClientInfoResponse, error)
 }
 
 type PurgeRequest struct {
@@ -20,4 +21,9 @@ type WhoamiResponse struct {
 	Client int64  `json:"client"`
 	Email  string `json:"email"`
 	Name   string `json:"name"`
+}
+
+type ClientInfoResponse struct {
+	ID    int64  `json:"id"`
+	Cname string `json:"cname"`
 }
