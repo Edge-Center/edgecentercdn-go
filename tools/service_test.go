@@ -99,3 +99,58 @@ func TestService_Purge(t *testing.T) {
 		})
 	}
 }
+
+func TestService_ClientInfo(t *testing.T) {
+	tests := []struct {
+		name             string
+		response         ClientInfoResponse
+		expectedResponse ClientInfoResponse
+	}{
+		{
+			name: "Get client info",
+			response: ClientInfoResponse{
+				ID:    123,
+				Cname: "cl-123.edgecdn.ru",
+			},
+			expectedResponse: ClientInfoResponse{
+				ID:    123,
+				Cname: "cl-123.edgecdn.ru",
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			mockHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				if r.URL.Path != "/cdn/clients/me" || r.Method != http.MethodGet {
+					http.Error(w, "not found", http.StatusNotFound)
+					return
+				}
+
+				w.Header().Set("Content-Type", "application/json")
+
+				if err := json.NewEncoder(w).Encode(tt.response); err != nil {
+					w.WriteHeader(http.StatusBadRequest)
+					_ = json.NewEncoder(w).Encode(map[string]string{"message": fmt.Sprintf("invalid response %s", err.Error())})
+					return
+				}
+			})
+
+			ts := httptest.NewServer(mockHandler)
+			defer ts.Close()
+
+			service := NewService(provider.NewClient(ts.URL))
+
+			ctx := context.Background()
+
+			response, err := service.ClientInfo(ctx)
+			if err != nil {
+				t.Fatalf("unexpected error: %v", err)
+			}
+
+			if !reflect.DeepEqual(response, &tt.expectedResponse) {
+				t.Errorf("expected %+v, got %+v", &tt.expectedResponse, response)
+			}
+		})
+	}
+}
