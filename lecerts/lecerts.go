@@ -11,6 +11,7 @@ type LECertService interface {
 	UpdateLECert(ctx context.Context, resourceID int64) error
 	DeleteLECert(ctx context.Context, resourceID int64, force bool) error
 	CancelLECert(ctx context.Context, resourceID int64, active bool) error
+	IssueLECert(ctx context.Context, resourceID int64, req *IssueRequest) error
 }
 
 type LECertIssueService interface {
