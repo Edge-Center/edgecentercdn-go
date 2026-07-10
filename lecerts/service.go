@@ -13,6 +13,9 @@ type Service struct {
 	r edgecenter.Requester
 }
 
+var _ LECertService = (*Service)(nil)
+var _ LECertIssueService = (*Service)(nil)
+
 func NewService(r edgecenter.Requester) *Service {
 	return &Service{r: r}
 }
@@ -32,11 +35,20 @@ func (s *Service) GetLECert(ctx context.Context, resourceID int64) (*LECertStatu
 }
 
 func (s *Service) CreateLECert(ctx context.Context, resourceID int64) error {
+	return s.IssueLECert(ctx, resourceID, nil)
+}
+
+func (s *Service) IssueLECert(ctx context.Context, resourceID int64, req *IssueRequest) error {
 	u := url.URL{
 		Path: fmt.Sprintf("/cdn/resources/%d/ssl/le/issue", resourceID),
 	}
 
-	if err := s.r.Request(ctx, http.MethodPost, u.String(), nil, nil); err != nil {
+	var body interface{}
+	if req != nil && req.CertType != "" {
+		body = req
+	}
+
+	if err := s.r.Request(ctx, http.MethodPost, u.String(), body, nil); err != nil {
 		return fmt.Errorf("request: %w", err)
 	}
 
