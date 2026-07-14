@@ -41,3 +41,13 @@ func (s *Service) Whoami(ctx context.Context) (string, error) {
 
 	return fmt.Sprintf("%s %d", result.Email, result.Client), nil
 }
+
+func (s *Service) ClientInfo(ctx context.Context) (*ClientInfoResponse, error) {
+	var result ClientInfoResponse
+
+	if err := s.r.Request(ctx, http.MethodGet, "/cdn/clients/me", nil, &result); err != nil {
+		return nil, err
+	}
+
+	return &result, nil
+}
