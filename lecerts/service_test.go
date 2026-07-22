@@ -31,6 +31,7 @@ func TestLECertService_GetLECert(t *testing.T) {
 		Active:   true,
 		Resource: 100,
 		Started:  "2024-01-01T00:00:00Z",
+		CertType: CertTypeLE,
 		Statuses: []LEStatusDetail{
 			{Status: "done", Created: "2024-01-01T00:00:00Z"},
 		},
@@ -46,12 +47,69 @@ func TestLECertService_GetLECert(t *testing.T) {
 	assert.Equal(t, &expected, result)
 }
 
+func TestLECertService_GetLECert_LegacyCertTypeKey(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		assert.Equal(t, http.MethodGet, r.Method)
+		assert.Equal(t, "/cdn/resources/100/ssl/le/status", r.URL.Path)
+		w.WriteHeader(http.StatusOK)
+		_ = json.NewEncoder(w).Encode(map[string]interface{}{
+			"ssl_id":   1,
+			"statuses": []map[string]string{},
+			"started":  "2024-01-01T00:00:00Z",
+			"active":   true,
+			"resource": 100,
+			"cet_type": "MDDC",
+		})
+	}))
+	defer ts.Close()
+
+	service := NewService(provider.NewClient(ts.URL))
+	result, err := service.GetLECert(context.Background(), 100)
+
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	assert.Equal(t, CertTypeMDDC, result.CertType)
+}
+
 func TestLECertService_CreateLECert(t *testing.T) {
-	ts := setupMockServer(t, http.MethodPost, "/cdn/resources/100/ssl/le/issue", http.StatusOK, nil)
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		assert.Equal(t, http.MethodPost, r.Method)
+		assert.Equal(t, "/cdn/resources/100/ssl/le/issue", r.URL.Path)
+
+		body, err := io.ReadAll(r.Body)
+		require.NoError(t, err)
+		assert.Empty(t, body)
+
+		w.WriteHeader(http.StatusOK)
+	}))
 	defer ts.Close()
 
 	service := NewService(provider.NewClient(ts.URL))
 	err := service.CreateLECert(context.Background(), 100)
+
+	require.NoError(t, err)
+}
+
+func TestLECertService_IssueLECert(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		assert.Equal(t, http.MethodPost, r.Method)
+		assert.Equal(t, "/cdn/resources/100/ssl/le/issue", r.URL.Path)
+
+		body, err := io.ReadAll(r.Body)
+		require.NoError(t, err)
+
+		var payload IssueRequest
+		require.NoError(t, json.Unmarshal(body, &payload))
+		assert.Equal(t, CertTypeMDDC, payload.CertType)
+
+		w.WriteHeader(http.StatusOK)
+	}))
+	defer ts.Close()
+
+	service := NewService(provider.NewClient(ts.URL))
+	err := service.IssueLECert(context.Background(), 100, &IssueRequest{
+		CertType: CertTypeMDDC,
+	})
 
 	require.NoError(t, err)
 }
