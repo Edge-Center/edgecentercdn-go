@@ -192,17 +192,35 @@ func TestCreateRequest_Validate(t *testing.T) {
 	}
 }
 
-func TestCreateRequest_MarshalKeepsFalseActiveAndZeroWeight(t *testing.T) {
+func TestRequests_MarshalActiveAndWeight(t *testing.T) {
 	active := false
 	weight := 0
 
-	body, err := json.Marshal(&CreateRequest{Name: "r", Rule: "/x", Active: &active, Weight: &weight})
-	require.NoError(t, err)
-	assert.Contains(t, string(body), `"active":false`)
-	assert.Contains(t, string(body), `"weight":0`)
+	tests := []struct {
+		name    string
+		req     interface{}
+		present bool
+	}{
+		{name: "create sends explicit values", req: &CreateRequest{Name: "r", Rule: "/x", Active: &active, Weight: &weight}, present: true},
+		{name: "update sends explicit values", req: &UpdateRequest{Name: "r", Rule: "/x", Active: &active, Weight: &weight}, present: true},
+		{name: "create omits unset values", req: &CreateRequest{Name: "r", Rule: "/x"}},
+		{name: "update omits unset values", req: &UpdateRequest{Name: "r", Rule: "/x"}},
+	}
 
-	body, err = json.Marshal(&UpdateRequest{Name: "r", Rule: "/x"})
-	require.NoError(t, err)
-	assert.NotContains(t, string(body), `"active"`)
-	assert.NotContains(t, string(body), `"weight"`)
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			body, err := json.Marshal(tt.req)
+			require.NoError(t, err)
+
+			if tt.present {
+				assert.Contains(t, string(body), `"active":false`)
+				assert.Contains(t, string(body), `"weight":0`)
+
+				return
+			}
+
+			assert.NotContains(t, string(body), `"active"`)
+			assert.NotContains(t, string(body), `"weight"`)
+		})
+	}
 }
