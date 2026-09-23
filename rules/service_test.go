@@ -39,11 +39,13 @@ func TestRulesService_Create(t *testing.T) {
 	defer ts.Close()
 
 	service := NewService(provider.NewClient(ts.URL))
+	active := true
+	weight := 1
 	result, err := service.Create(context.Background(), 100, &CreateRequest{
 		Name:        "test-rule",
-		Active:      true,
+		Active:      &active,
 		Rule:        "/images/*",
-		Weight:      1,
+		Weight:      &weight,
 		OriginGroup: &originGroup,
 	})
 
@@ -82,11 +84,13 @@ func TestRulesService_Update(t *testing.T) {
 	defer ts.Close()
 
 	service := NewService(provider.NewClient(ts.URL))
+	active := true
+	weight := 2
 	result, err := service.Update(context.Background(), 100, 1, &UpdateRequest{
 		Name:   "updated-rule",
-		Active: true,
+		Active: &active,
 		Rule:   "/videos/*",
-		Weight: 2,
+		Weight: &weight,
 	})
 
 	require.NoError(t, err)
@@ -186,4 +190,19 @@ func TestCreateRequest_Validate(t *testing.T) {
 			assert.Equal(t, tt.wantErr, err.Error())
 		})
 	}
+}
+
+func TestCreateRequest_MarshalKeepsFalseActiveAndZeroWeight(t *testing.T) {
+	active := false
+	weight := 0
+
+	body, err := json.Marshal(&CreateRequest{Name: "r", Rule: "/x", Active: &active, Weight: &weight})
+	require.NoError(t, err)
+	assert.Contains(t, string(body), `"active":false`)
+	assert.Contains(t, string(body), `"weight":0`)
+
+	body, err = json.Marshal(&UpdateRequest{Name: "r", Rule: "/x"})
+	require.NoError(t, err)
+	assert.NotContains(t, string(body), `"active"`)
+	assert.NotContains(t, string(body), `"weight"`)
 }
