@@ -15,22 +15,22 @@ type RulesService interface {
 }
 
 type CreateRequest struct {
-	Active                 bool                        `json:"active,omitempty"`
+	Active                 *bool                       `json:"active,omitempty"`
 	Name                   string                      `json:"name,omitempty"`
 	Rule                   string                      `json:"rule,omitempty"`
 	OriginGroup            *int                        `json:"originGroup"`
 	OverrideOriginProtocol *string                     `json:"overrideOriginProtocol"`
-	Weight                 int                         `json:"weight,omitempty"`
+	Weight                 *int                        `json:"weight,omitempty"`
 	Options                *edgecenter.LocationOptions `json:"options,omitempty"`
 }
 
 type UpdateRequest struct {
-	Active                 bool                        `json:"active,omitempty"`
+	Active                 *bool                       `json:"active,omitempty"`
 	Name                   string                      `json:"name,omitempty"`
 	Rule                   string                      `json:"rule,omitempty"`
 	OriginGroup            *int                        `json:"originGroup"`
 	OverrideOriginProtocol *string                     `json:"overrideOriginProtocol"`
-	Weight                 int                         `json:"weight,omitempty"`
+	Weight                 *int                        `json:"weight,omitempty"`
 	Options                *edgecenter.LocationOptions `json:"options,omitempty"`
 }
 

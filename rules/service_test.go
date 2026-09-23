@@ -39,11 +39,13 @@ func TestRulesService_Create(t *testing.T) {
 	defer ts.Close()
 
 	service := NewService(provider.NewClient(ts.URL))
+	active := true
+	weight := 1
 	result, err := service.Create(context.Background(), 100, &CreateRequest{
 		Name:        "test-rule",
-		Active:      true,
+		Active:      &active,
 		Rule:        "/images/*",
-		Weight:      1,
+		Weight:      &weight,
 		OriginGroup: &originGroup,
 	})
 
@@ -82,11 +84,13 @@ func TestRulesService_Update(t *testing.T) {
 	defer ts.Close()
 
 	service := NewService(provider.NewClient(ts.URL))
+	active := true
+	weight := 2
 	result, err := service.Update(context.Background(), 100, 1, &UpdateRequest{
 		Name:   "updated-rule",
-		Active: true,
+		Active: &active,
 		Rule:   "/videos/*",
-		Weight: 2,
+		Weight: &weight,
 	})
 
 	require.NoError(t, err)
@@ -184,6 +188,39 @@ func TestCreateRequest_Validate(t *testing.T) {
 
 			require.Error(t, err)
 			assert.Equal(t, tt.wantErr, err.Error())
+		})
+	}
+}
+
+func TestRequests_MarshalActiveAndWeight(t *testing.T) {
+	active := false
+	weight := 0
+
+	tests := []struct {
+		name    string
+		req     interface{}
+		present bool
+	}{
+		{name: "create sends explicit values", req: &CreateRequest{Name: "r", Rule: "/x", Active: &active, Weight: &weight}, present: true},
+		{name: "update sends explicit values", req: &UpdateRequest{Name: "r", Rule: "/x", Active: &active, Weight: &weight}, present: true},
+		{name: "create omits unset values", req: &CreateRequest{Name: "r", Rule: "/x"}},
+		{name: "update omits unset values", req: &UpdateRequest{Name: "r", Rule: "/x"}},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			body, err := json.Marshal(tt.req)
+			require.NoError(t, err)
+
+			if tt.present {
+				assert.Contains(t, string(body), `"active":false`)
+				assert.Contains(t, string(body), `"weight":0`)
+
+				return
+			}
+
+			assert.NotContains(t, string(body), `"active"`)
+			assert.NotContains(t, string(body), `"weight"`)
 		})
 	}
 }
