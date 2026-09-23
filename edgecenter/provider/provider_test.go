@@ -320,3 +320,52 @@ func TestClient_Request_LowercaseJSONErrorResponse(t *testing.T) {
 	assert.Equal(t, "token", apiErr.Details[0].Field)
 	assert.Equal(t, []string{"invalid token"}, apiErr.Details[0].Messages)
 }
+
+func TestClient_Request_ErrorTextCarriesAPIDetails(t *testing.T) {
+	tests := []struct {
+		name     string
+		status   int
+		body     string
+		sentinel error
+		want     string
+	}{
+		{
+			name:     "validation error",
+			status:   http.StatusBadRequest,
+			body:     `{"errors":{"consistent_balancing":["Source group cannot contain sources with 'backup': true if consistent_balancing is enabled"]}}`,
+			sentinel: edgecenter.ErrBadRequest,
+			want:     "POST /cdn/source_groups: bad request: consistent_balancing: Source group cannot contain sources with 'backup': true if consistent_balancing is enabled",
+		},
+		{
+			name:     "nested validation error",
+			status:   http.StatusBadRequest,
+			body:     `{"errors":{"origins":{"nonexistent.invalid":{"source":["The domain name cannot be resolved. Please specify a valid domain name."]}}}}`,
+			sentinel: edgecenter.ErrBadRequest,
+			want:     "POST /cdn/source_groups: bad request: origins.nonexistent.invalid.source: The domain name cannot be resolved. Please specify a valid domain name.",
+		},
+		{
+			name:     "not found with empty body",
+			status:   http.StatusNotFound,
+			body:     `{}`,
+			sentinel: edgecenter.ErrNotFound,
+			want:     "POST /cdn/source_groups: resource not found",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				w.WriteHeader(tt.status)
+				_, _ = w.Write([]byte(tt.body))
+			}))
+			defer ts.Close()
+
+			client := NewClient(ts.URL)
+
+			err := client.Request(context.Background(), http.MethodPost, "/cdn/source_groups", nil, nil)
+			require.Error(t, err)
+			assert.True(t, errors.Is(err, tt.sentinel))
+			assert.Equal(t, tt.want, err.Error())
+		})
+	}
+}
