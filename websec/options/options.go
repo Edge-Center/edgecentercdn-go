@@ -27,7 +27,7 @@ const (
 type LocationOptions struct {
 	AllowedHTTPMethods    Field[ListOption]                  `json:"allowed_http_methods,omitzero"`
 	ASNACL                Field[ASNACLOption]                `json:"asn_acl,omitzero"`
-	RefererACL            Field[AccessPolicyOption]          `json:"referer_acl,omitzero"`
+	RefererACL            Field[RefererACLOption]            `json:"referer_acl,omitzero"`
 	UserAgentACL          Field[AccessPolicyOption]          `json:"user_agent_acl,omitzero"`
 	AntibotFloodChallenge Field[AntibotFloodChallengeOption] `json:"antibot_flood_challenge,omitzero"`
 }
@@ -69,6 +69,13 @@ type AccessPolicyOption struct {
 	Enabled        bool       `json:"enabled"`
 	PolicyType     PolicyType `json:"policy_type"`
 	ExceptedValues []string   `json:"excepted_values"`
+}
+
+type RefererACLOption struct {
+	Enabled        bool       `json:"enabled"`
+	PolicyType     PolicyType `json:"policy_type"`
+	ExceptedValues []string   `json:"excepted_values"`
+	DirectLink     bool       `json:"direct_link"`
 }
 
 type ASNACLOption struct {
@@ -124,6 +131,15 @@ func (o ListOption) MarshalJSON() ([]byte, error) {
 
 func (o AccessPolicyOption) MarshalJSON() ([]byte, error) {
 	type plain AccessPolicyOption
+	if o.ExceptedValues == nil {
+		o.ExceptedValues = []string{}
+	}
+
+	return json.Marshal(plain(o))
+}
+
+func (o RefererACLOption) MarshalJSON() ([]byte, error) {
+	type plain RefererACLOption
 	if o.ExceptedValues == nil {
 		o.ExceptedValues = []string{}
 	}

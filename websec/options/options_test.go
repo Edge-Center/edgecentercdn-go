@@ -18,7 +18,7 @@ const resourceOptionsResponseJSON = `{
 	"geo_acl": {"enabled": false, "policy_type": "deny", "excepted_values": {"RU": ["MOW", "SPE"], "KZ": []}},
 	"ip_hash": {"enabled": true, "value": false},
 	"redirect_http_to_https": {"enabled": true, "value": true},
-	"referer_acl": {"enabled": true, "policy_type": "deny", "excepted_values": ["", "*.example.com", "example.*"]},
+	"referer_acl": {"enabled": true, "policy_type": "deny", "excepted_values": ["", "*.example.com", "example.*"], "direct_link": true},
 	"response_headers": {
 		"enabled": true,
 		"value": [
@@ -87,6 +87,12 @@ func TestResourceOptions_DecodesResponseBody(t *testing.T) {
 		PolicyType:     PolicyTypeAllow,
 		ExceptedValues: []int64{333, 4294967295},
 	}), opts.ASNACL)
+	assert.Equal(t, Value(RefererACLOption{
+		Enabled:        true,
+		PolicyType:     PolicyTypeDeny,
+		ExceptedValues: []string{"", "*.example.com", "example.*"},
+		DirectLink:     true,
+	}), opts.RefererACL)
 	assert.Equal(t, Value(GeoACLOption{
 		Enabled:        false,
 		PolicyType:     PolicyTypeDeny,
@@ -238,6 +244,21 @@ func TestLocationOptions_MarshalSendsOnlyTouchedKeys(t *testing.T) {
 			}}`,
 		},
 		{
+			name: "referer acl sends direct link",
+			opts: LocationOptions{RefererACL: Value(RefererACLOption{
+				Enabled:        true,
+				PolicyType:     PolicyTypeAllow,
+				ExceptedValues: []string{"example.com"},
+				DirectLink:     true,
+			})},
+			want: `{"referer_acl": {
+				"enabled": true,
+				"policy_type": "allow",
+				"excepted_values": ["example.com"],
+				"direct_link": true
+			}}`,
+		},
+		{
 			name: "disabled antibot challenge sends value null",
 			opts: LocationOptions{AntibotFloodChallenge: Value(AntibotFloodChallengeOption{TimeLimit: 10})},
 			want: `{"antibot_flood_challenge": {
@@ -272,6 +293,11 @@ func TestOptions_NilCollectionsAreSentAsEmpty(t *testing.T) {
 			name:   "access policy option",
 			option: AccessPolicyOption{PolicyType: PolicyTypeAllow},
 			want:   `{"enabled": false, "policy_type": "allow", "excepted_values": []}`,
+		},
+		{
+			name:   "referer acl option",
+			option: RefererACLOption{PolicyType: PolicyTypeDeny},
+			want:   `{"enabled": false, "policy_type": "deny", "excepted_values": [], "direct_link": false}`,
 		},
 		{
 			name:   "asn acl option",
