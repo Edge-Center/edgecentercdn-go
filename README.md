@@ -2,6 +2,7 @@
 
 [![CI](https://github.com/Edge-Center/edgecentercdn-go/actions/workflows/ci.yml/badge.svg)](https://github.com/Edge-Center/edgecentercdn-go/actions/workflows/ci.yml)
 [![Go Reference](https://pkg.go.dev/badge/github.com/Edge-Center/edgecentercdn-go.svg)](https://pkg.go.dev/github.com/Edge-Center/edgecentercdn-go)
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 
 `edgecentercdn-go` is the EdgeCenter CDN API SDK for the Go programming language.
 It ships both a library for building integrations (including the Terraform
@@ -100,3 +101,8 @@ make test
 
 The coverage gate (`make cover-check`) protects the SDK packages. CLI commands
 are covered separately by the end-to-end test track.
+
+## License
+
+This project is licensed under the Apache License 2.0, see [LICENSE](LICENSE).
+Copyright (c) 2022 LLC "EDGECENTER"
