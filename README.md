@@ -87,8 +87,8 @@ Common tasks are wrapped in the `Makefile`:
 | `make snapshot` | Build release artifacts locally via GoReleaser |
 | `make install-tools` | Install the dev tools used above |
 
-CI (`.github/workflows/ci.yml`) runs lint, the test suite across Go 1.25 and
-1.26, the coverage gate, and a build check on every pull request.
+CI (`.github/workflows/ci.yml`) runs lint, the test suite on Go 1.27, the
+coverage gate, and a build check on every pull request.
 
 ## Testing
 
